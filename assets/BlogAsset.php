@@ -3,20 +3,17 @@ namespace app\assets;
 
 use yii\web\AssetBundle;
 
-class SiteAsset extends AssetBundle
+class BlogAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'cdn/css/bootstrap-social.css',
-        'cdn/css/font-sahel.css',
-        'cdn/css/admin.css',
-    ];
-    public $js = [
+        'themes/blog/css/blog.css',
     ];
     public $depends = [
         'yii\web\YiiAsset',
-        'app\assets\BootstrapAsset',
+        'blog\assets\cdn\BootstrapAsset',
+        'blog\assets\cdn\FontSahelAsset',
         //'yii\bootstrap\BootstrapThemeAsset',
     ];
 }
