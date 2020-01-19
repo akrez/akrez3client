@@ -1,5 +1,24 @@
 <?php
 
+function dd(...$input)
+{
+    foreach ($input as $i) {
+        var_dump($i);
+    }
+    die;
+}
+
+function jd(...$input)
+{
+    die(json_encode($input));
+}
+
+function ed($input)
+{
+    var_export($input);
+    die;
+}
+
 defined('YII_DEBUG') or define('YII_DEBUG', true);
 defined('YII_ENV') or define('YII_ENV', 'dev');
 defined('BASE_PATH') or define('BASE_PATH', dirname(__DIR__));
@@ -11,7 +30,7 @@ require VENDOR_PATH . '/yiisoft/yii2/Yii.php';
 
 $params = require(__DIR__ . '/../config/params.php');
 
-if ($params['isParked']) {
+if ($params['params']['isParked']) {
     $rules = [
         '/site/gallery/<type:\w+>/<whq>/<name:[\w\.]+>' => 'site/gallery',
         '/<controller:[\w\-]+>/<action:[\w\-]+>/<id:\d+>' => '<controller>/<action>',
@@ -65,24 +84,22 @@ $config = [
             ],
         ],
         'request' => [
-            'csrfParam' => '_csrf-blog-' . $params['blogName'],
+            'csrfParam' => '_csrf-blog-' . $params['params']['blogName'],
             'cookieValidationKey' => $params['cookieValidationKey'],
             'baseUrl' => $params['baseUrl'],
         ],
         'session' => [
-            'name' => 'basic-blog-' . $params['blogName'],
+            'name' => 'basic-blog-' . $params['params']['blogName'],
             'cookieParams' => [
                 'httpOnly' => true,
             ],
         ],
-        /*
-          'user' => [
-          'class' => 'yii\web\User',
-          'identityClass' => 'app\models\User',
-          'enableAutoLogin' => true,
-          'identityCookie' => ['name' => '_identity-app', 'httpOnly' => true],
-          ],
-         */
+        'user' => [
+            'class' => 'yii\web\User',
+            'identityClass' => 'app\models\Customer',
+            'enableAutoLogin' => true,
+            'identityCookie' => ['name' => '_identity-app', 'httpOnly' => true],
+        ],
         'blog' => [
             'class' => 'app\components\BlogContainer',
         ],
