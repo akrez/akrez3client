@@ -119,13 +119,6 @@ $config = [
         'formatter' => [
             'class' => 'app\components\Formatter',
         ],
-        'view' => [
-            'theme' => [
-                'pathMap' => [
-                    '@app/views' => '@app/views/' . $params['theme'],
-                ],
-            ],
-        ],
     ],
     'params' => $params['params'],
 ];
