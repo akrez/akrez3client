@@ -39,8 +39,6 @@ class Http extends Component
     {
         $fullUrl = self::buildUrl($url, $params);
         $data = (new Client())->createRequest()->setMethod('POST')->setUrl($fullUrl)->setData($data)->send()->getData();
-        //
-        dd( $data);
         switch ($data['code']) {
             case 200:
                 return $data;

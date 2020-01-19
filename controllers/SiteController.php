@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\components\Http;
 
 class SiteController extends Controller
@@ -29,9 +30,9 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        $result = Http::search([]);
-        ed($result);
-        return $this->render('index');
+        return $this->render('index', [
+                    'result' => Http::search(Yii::$app->request->get()),
+        ]);
     }
 
 }
