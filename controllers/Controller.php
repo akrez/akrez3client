@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller as BaseController;
 use yii\web\ForbiddenHttpException;
+use yii\helpers\Url;
 
 class Controller extends BaseController
 {
@@ -18,7 +19,7 @@ class Controller extends BaseController
                 'denyCallback' => function ($rule, $action) {
                     if (Yii::$app->user->isGuest) {
                         Yii::$app->user->setReturnUrl(Url::current());
-                        return $this->redirect(['/site/signin']);
+                        return Yii::$app->controller->redirect(['/site/signin']);
                     }
                     throw new ForbiddenHttpException(Yii::t('yii', 'You are not allowed to perform this action.'));
                 }

@@ -12,8 +12,8 @@ class BlogAsset extends AssetBundle
     ];
     public $depends = [
         'yii\web\YiiAsset',
-        'blog\assets\cdn\BootstrapAsset',
-        'blog\assets\cdn\FontSahelAsset',
+        'app\assets\cdn\BootstrapAsset',
+        'app\assets\cdn\FontSahelAsset',
         //'yii\bootstrap\BootstrapThemeAsset',
     ];
 }

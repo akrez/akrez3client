@@ -2,7 +2,7 @@
 
 use app\assets\BlogAsset;
 use app\components\BlogHelper;
-use yii\bootstrap\Alert;
+use app\components\Alert;
 use yii\helpers\Html;
 
 BlogAsset::register($this);

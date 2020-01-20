@@ -12,7 +12,7 @@ class SiteController extends Controller
     {
         return self::defaultBehaviors([
                     [
-                        'actions' => ['error', 'index',],
+                        'actions' => ['error', 'index', 'category', 'product',],
                         'allow' => true,
                     ],
         ]);
@@ -30,9 +30,20 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        return $this->render('index', [
-                    'result' => Http::search(Yii::$app->request->get()),
-        ]);
+        $this->view->params = Http::search(Yii::$app->request->get());
+        return $this->render('index');
+    }
+
+    public function actionCategory($id)
+    {
+        $this->view->params = Http::category($id, Yii::$app->request->get());
+        return $this->render('category');
+    }
+
+    public function actionProduct($id)
+    {
+        $this->view->params = Http::product($id, Yii::$app->request->get());
+        return $this->render('product');
     }
 
 }
