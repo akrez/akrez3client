@@ -24,6 +24,7 @@ class Http extends Component
 {
 
     private static $baseUrl = 'http://localhost/akrez3/api/v1/';
+    private static $baseGalleryUrl = 'http://localhost/akrez3/site/gallery/';
 
     private static function buildUrl($url, $params = [])
     {
@@ -35,12 +36,13 @@ class Http extends Component
         return self::$baseUrl . $url . ($params ? '?' . http_build_query($params) : '');
     }
 
-    private static function post($url, $params = [], $data = [])
+    private static function post($url, $postData = [], $params = [])
     {
         $fullUrl = self::buildUrl($url, $params);
-        $data = (new Client())->createRequest()->setMethod('POST')->setUrl($fullUrl)->setData($data)->send()->getData();
+        $data = (new Client())->createRequest()->setMethod('POST')->setUrl($fullUrl)->setData($postData)->send()->getData();
         switch ($data['code']) {
             case 200:
+                Yii::$app->blog->setIdentity($data['_blog']);
                 return $data;
             case 400:
                 throw new BadRequestHttpException;
@@ -66,9 +68,42 @@ class Http extends Component
         throw new ServerErrorHttpException('An internal server error occurred.');
     }
 
+    public static function gallery($type, $whq, $name)
+    {
+        $type = preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $type);
+        $whq = preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $whq);
+        $name = preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $name);
+        //
+        $basePath = Yii::getAlias("@webroot/gallery/$type/$whq");
+        $path = "$basePath/$name";
+        $apiUrl = self::$baseGalleryUrl . "$type/$whq/$name";
+        $url = Yii::getAlias("@web") . "/gallery/$type/$whq/$name";
+        //
+        if (file_exists($path)) {
+            return $url;
+        }
+        //
+        $response = (new Client())->createRequest()->setMethod('GET')->setUrl($apiUrl)->send();
+        if ($response->statusCode == 200) {
+            file_exists($basePath) || mkdir($basePath, '755', true);
+            file_put_contents($path, $response->getContent());
+        }
+        return $url;
+    }
+
     public static function search($params)
     {
         return self::post('search', $params);
+    }
+
+    public static function category($id, $params)
+    {
+        return self::post('search', (array) $params, ['categoryId' => $id]);
+    }
+
+    public static function product($id, $params)
+    {
+        return self::post('product', [], ['id' => $id]);
     }
 
 }

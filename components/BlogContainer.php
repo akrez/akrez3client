@@ -19,22 +19,12 @@ class BlogContainer extends Component
         return $this->_identity;
     }
 
-    public function hasIdentity()
-    {
-        return $this->_identity !== null;
-    }
-
     public function attribute($attribute)
     {
-        if ($this->_identity && $this->_identity->hasAttribute($attribute)) {
-            return $this->_identity->$attribute;
+        if (is_array($this->_identity) && array_key_exists($attribute, $this->_identity)) {
+            return $this->_identity[$attribute];
         }
         return null;
-    }
-
-    public function name()
-    {
-        return $this->attribute('name');
     }
 
 }
