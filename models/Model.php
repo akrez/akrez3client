@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use yii\base\Model as BaseModel;
+
 class Model extends BaseModel
 {
 
