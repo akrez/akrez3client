@@ -15,7 +15,7 @@ use yii\helpers\HtmlPurifier;
     <div class="col-sm-5">
         <div class="input-group">
 
-            <?= Html::textInput('Search[title][0][value]', (isset($dp['search']['title'][0]['value']) ? $dp['search']['title'][0]['value'] : null), ['class' => 'form-control']); ?>
+            <?= Html::textInput('Search[title][0][value]', (isset(Yii::$app->view->params['search']['title'][0]['value']) ? Yii::$app->view->params['search']['title'][0]['value'] : null), ['class' => 'form-control']); ?>
             <?= Html::hiddenInput('Search[title][0][operation]', 'LIKE'); ?>
             <span class="input-group-btn">
                 <?= Html::submitButton(Yii::t('app', 'Search'), ['style' => 'height: 34px;', 'class' => 'btn btn-default btn-block']); ?>
