@@ -9,6 +9,8 @@ use yii\helpers\Url;
 class BlogHelper extends Component
 {
 
+    public static $constant = false;
+
     public static function url($action, $config = [])
     {
         if (Yii::$app->params['isParked']) {
@@ -26,6 +28,24 @@ class BlogHelper extends Component
     public static function getImage($type, $whq, $name)
     {
         return Http::gallery($type, $whq, $name);
+    }
+
+    public static function getConstant($level1 = null, $level2 = null, $level3 = null)
+    {
+        if (self::$constant == false) {
+            self::$constant = Http::constant(Yii::$app->blog->attribute('constant_id'));
+        }
+        $value = self::$constant;
+        if ($level1) {
+            $value = $value[$level1];
+        }
+        if ($level2) {
+            $value = $value[$level2];
+        }
+        if ($level3) {
+            $value = $value[$level3];
+        }
+        return $value;
     }
 
 }

@@ -91,6 +91,18 @@ class Http extends Component
         return $url;
     }
 
+    public static function constant($constantId)
+    {
+        $path = Yii::getAlias("@webroot") . "/cdn/constant/$constantId.json";
+        if (file_exists($path)) {
+            return json_decode(file_get_contents($path), true);
+        }
+        $fullUrl = self::buildUrl('constant');
+        $data = (new Client())->createRequest()->setMethod('POST')->setUrl($fullUrl)->send()->getData();
+        file_put_contents($path, json_encode($data));
+        return $data;
+    }
+
     public static function search($params)
     {
         return self::post('search', $params);

@@ -11,6 +11,7 @@ $this->registerJs('
     });
 ', View::POS_END);
 $blogLogo = BlogHelper::getImage('logo', '400__67', Yii::$app->blog->attribute('logo'));
+$constant = BlogHelper::getConstant();
 ?>
 
 <?php if ($this->context->id == 'site' && in_array($this->context->action->id, ['index'])): ?>
@@ -45,7 +46,7 @@ $blogLogo = BlogHelper::getImage('logo', '400__67', Yii::$app->blog->attribute('
             $field = Yii::$app->view->params['fields'][$fieldId];
             $type = $field['type'];
             $typeFilter = $field['filter'];
-            $typeOperations = (isset(Yii::$app->view->params['opertaions'][$typeFilter]) ? Yii::$app->view->params['opertaions'][$typeFilter] : []);
+            $typeOperations = (isset($constant['opertaion'][$typeFilter]) ? $constant['opertaion'][$typeFilter] : []);
 
             if (in_array($typeFilter, [FieldList::TYPE_STRING, FieldList::TYPE_NUMBER])):
                 $filters[] = ['operation' => null, 'value' => null];
