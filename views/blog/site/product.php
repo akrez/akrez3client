@@ -1,12 +1,10 @@
 <?php
 
 use app\components\BlogHelper;
-use app\models\Color;
 use app\models\FieldList;
 use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
 use yii\widgets\Breadcrumbs;
-
 
 $this->title = Yii::$app->blog->attribute('title') . ' | ' . Yii::$app->view->params['product']['title'];
 
@@ -115,7 +113,7 @@ Breadcrumbs::widget([
                             <div>
                                 <?php if ($package['color']) : ?>
                                     <span style="float: right;">
-                                        <span class="label label-default" style="background-color: #<?= $package['color'] ?>">⠀⠀</span> <?= HtmlPurifier::process(Color::getLabel($package['color'])) ?>
+                                        <span class="label label-default" style="background-color: #<?= $package['color'] ?>">⠀⠀</span> <?= HtmlPurifier::process(BlogHelper::getConstant('color', $package['color'])) ?>
                                     </span>
                                 <?php endif; ?>
                                 <span style="float: left;">
