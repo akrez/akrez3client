@@ -1,6 +1,6 @@
 <?php
 
-use yii\helpers\Url;
+use app\components\BlogHelper;
 use yii\widgets\ActiveForm;
 ?>
 
@@ -25,7 +25,7 @@ use yii\widgets\ActiveForm;
                 <button type="submit" class="btn btn-primary btn-block" style="float: right;"> <?= Yii::t('app', 'Signin') ?> </button>
             </div>
             <div class="form-group">
-                <a type="button" class="btn btn-default" style="margin-top: 20px;float: right;" href="<?= Url::to(['site/reset-password-request']) ?>"><?= Yii::t('app', 'Reset Password Request') ?></a>
+                <a type="button" class="btn btn-default" style="margin-top: 20px;float: right;" href="<?= BlogHelper::url('site/reset-password-request') ?>"><?= Yii::t('app', 'Reset Password Request') ?></a>
             </div>
             <?php ActiveForm::end(); ?>
         </div>
