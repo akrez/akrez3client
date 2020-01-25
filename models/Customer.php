@@ -31,24 +31,29 @@ class Customer extends ActiveRecord implements IdentityInterface
 
     public function rules()
     {
+
         return [
+            //
+            [0 => ['email', 'updated_at', 'created_at', 'status', 'token', 'blog_name',], 1 => 'safe',],
+            //signup
             [0 => ['email',], 1 => 'required', 'on' => 'signup',],
-            [0 => ['password',], 1 => 'required', 'on' => 'signup',],
-            [0 => ['email',], 1 => 'required', 'on' => 'signin',],
-            [0 => ['password',], 1 => 'required', 'on' => 'signin',],
-            [0 => ['email',], 1 => 'required', 'on' => 'resetPasswordRequest',],
-            [0 => ['email',], 1 => 'required', 'on' => 'resetPassword',],
-            [0 => ['password',], 1 => 'required', 'on' => 'resetPassword',],
-            [0 => ['reset_token',], 1 => 'required', 'on' => 'resetPassword',],
-            //
             [0 => ['email',], 1 => 'email', 'on' => 'signup',],
-            [0 => ['email',], 1 => 'email', 'on' => 'signin',],
-            [0 => ['email',], 1 => 'email', 'on' => 'resetPasswordRequest',],
-            [0 => ['email',], 1 => 'email', 'on' => 'resetPassword',],
-            //
+            [0 => ['password',], 1 => 'required', 'on' => 'signup',],
             [0 => ['password',], 1 => 'minLenValidation', 'params' => ['min' => 6,], 'on' => 'signup',],
+            //signin
+            [0 => ['email',], 1 => 'required', 'on' => 'signin',],
+            [0 => ['email',], 1 => 'email', 'on' => 'signin',],
+            [0 => ['password',], 1 => 'required', 'on' => 'signin',],
             [0 => ['password',], 1 => 'minLenValidation', 'params' => ['min' => 6,], 'on' => 'signin',],
+            //resetPasswordRequest
+            [0 => ['email',], 1 => 'required', 'on' => 'resetPasswordRequest',],
+            [0 => ['email',], 1 => 'email', 'on' => 'resetPasswordRequest',],
+            //resetPassword
+            [0 => ['email',], 1 => 'required', 'on' => 'resetPassword',],
+            [0 => ['email',], 1 => 'email', 'on' => 'resetPassword',],
+            [0 => ['password',], 1 => 'required', 'on' => 'resetPassword',],
             [0 => ['password',], 1 => 'minLenValidation', 'params' => ['min' => 6,], 'on' => 'resetPassword',],
+            [0 => ['reset_token',], 1 => 'required', 'on' => 'resetPassword',],
         ];
     }
 

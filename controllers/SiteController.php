@@ -2,8 +2,11 @@
 
 namespace app\controllers;
 
+use app\components\BlogHelper;
 use Yii;
 use app\components\Http;
+use app\models\Customer;
+use yii\helpers\Url;
 
 class SiteController extends Controller
 {
@@ -12,8 +15,20 @@ class SiteController extends Controller
     {
         return self::defaultBehaviors([
                     [
+                        'actions' => ['signin', 'signup', 'reset-password-request', 'reset-password'],
+                        'allow' => true,
+                        'verbs' => ['GET', 'POST'],
+                        'roles' => ['?'],
+                    ],
+                    [
                         'actions' => ['error', 'index', 'category', 'product',],
                         'allow' => true,
+                    ],
+                    [
+                        'actions' => ['signout'],
+                        'allow' => true,
+                        'verbs' => ['GET', 'POST'],
+                        'roles' => ['@'],
                     ],
         ]);
     }
@@ -26,6 +41,110 @@ class SiteController extends Controller
                 'layout' => 'blank'
             ],
         ];
+    }
+
+    public function actionSignout()
+    {
+        Http::signout();
+        Yii::$app->user->logout();
+        return $this->redirect(BlogHelper::blogFirstPageUrl());
+    }
+
+    public function actionSignin()
+    {
+        $signin = new Customer(['scenario' => 'signin']);
+        if ($signin->load(Yii::$app->request->post())) {
+            $this->view->params = Http::signin($signin);
+            if ($this->view->params['errors']) {
+                $signin->load($this->view->params, 'customer');
+                $signin->addErrors($this->view->params['errors']);
+            } else {
+                $user = Customer::findOne($this->view->params['customer']['id']);
+                if (empty($user)) {
+                    $user = new Customer();
+                }
+                $user->load($this->view->params, 'customer');
+                $user->id = $this->view->params['customer']['id'];
+                if ($user->save()) {
+                    Yii::$app->user->login($user);
+                    return $this->goBack(BlogHelper::blogFirstPageUrl());
+                }
+            }
+        } else {
+            $this->view->params = Http::info();
+        }
+        Yii::$app->view->title = 'وارد شوید!';
+        return $this->render('signin', [
+                    'model' => $signin,
+        ]);
+    }
+
+    public function actionSignup()
+    {
+        $signup = new Customer(['scenario' => 'signup']);
+        if ($signup->load(Yii::$app->request->post())) {
+            $this->view->params = Http::signup($signup);
+            if ($this->view->params['errors']) {
+                $signup->load($this->view->params, 'customer');
+                $signup->addErrors($this->view->params['errors']);
+            } else {
+                $user = new Customer();
+                $user->load($this->view->params, 'customer');
+                $user->id = $this->view->params['customer']['id'];
+                if ($user->save()) {
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'alertSignupSuccessfull'));
+                    return $this->redirect(Url::current(['site/signin']));
+                }
+            }
+        } else {
+            $this->view->params = Http::info();
+        }
+        Yii::$app->view->title = 'ثبت نام کنید!';
+        return $this->render('signup', [
+                    'model' => $signup,
+        ]);
+    }
+
+    public function actionResetPassword()
+    {
+        $resetPassword = new Customer(['scenario' => 'resetPassword']);
+        if ($resetPassword->load(Yii::$app->request->post())) {
+            $this->view->params = Http::resetPassword($resetPassword);
+            if ($this->view->params['errors']) {
+                $resetPassword->load($this->view->params, 'customer');
+                $resetPassword->addErrors($this->view->params['errors']);
+            } else {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'alertResetPasswordSuccessfull'));
+                return $this->redirect(Url::current(['site/signin']));
+            }
+        } else {
+            $this->view->params = Http::info();
+        }
+        Yii::$app->view->title = Yii::t('app', 'Reset Password');
+        return $this->render('reset-password', [
+                    'model' => $resetPassword,
+        ]);
+    }
+
+    public function actionResetPasswordRequest()
+    {
+        $resetPasswordRequest = new Customer(['scenario' => 'resetPasswordRequest']);
+        if ($resetPasswordRequest->load(Yii::$app->request->post())) {
+            $this->view->params = Http::resetPasswordRequest($resetPasswordRequest);
+            if ($this->view->params['errors']) {
+                $resetPasswordRequest->load($this->view->params, 'customer');
+                $resetPasswordRequest->addErrors($this->view->params['errors']);
+            } else {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'alertResetPasswordRequestSuccessfull'));
+                return $this->redirect(Url::current(['site/reset-password']));
+            }
+        } else {
+            $this->view->params = Http::info();
+        }
+        Yii::$app->view->title = Yii::t('app', 'Reset Password Request');
+        return $this->render('reset-password-request', [
+                    'model' => $resetPasswordRequest,
+        ]);
     }
 
     public function actionIndex()

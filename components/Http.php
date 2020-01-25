@@ -118,4 +118,46 @@ class Http extends Component
         return self::post('product', [], ['id' => $id]);
     }
 
+    public static function info()
+    {
+        return self::post('info');
+    }
+
+    public static function signin($user)
+    {
+        return self::post('signin', [
+                    'email' => $user->email,
+                    'password' => $user->password,
+        ]);
+    }
+
+    public static function signup($user)
+    {
+        return self::post('signup', [
+                    'email' => $user->email,
+                    'password' => $user->password,
+        ]);
+    }
+
+    public static function signout()
+    {
+        return self::post('signout');
+    }
+
+    public static function resetPasswordRequest($user)
+    {
+        return self::post('reset-password-request', [
+                    'email' => $user->email,
+        ]);
+    }
+
+    public static function resetPassword($user)
+    {
+        return self::post('reset-password', [
+                    'email' => $user->email,
+                    'password' => $user->password,
+                    'reset_token' => $user->reset_token,
+        ]);
+    }
+
 }

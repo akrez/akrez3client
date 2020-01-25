@@ -14,9 +14,9 @@ NavBar::begin([
     ],
 ]);
 
-if ($categories = Yii::$app->view->params['_categories']) {
+if (isset(Yii::$app->view->params['_categories']) && Yii::$app->view->params['_categories']) {
     $menuItems = [];
-    foreach ($categories as $categoryId => $category) {
+    foreach (Yii::$app->view->params['_categories'] as $categoryId => $category) {
         $menuItems[] = ['label' => $category, 'url' => BlogHelper::url('site/category', ['id' => $categoryId])];
     }
     echo Nav::widget([
@@ -29,9 +29,7 @@ if ($categories = Yii::$app->view->params['_categories']) {
         'options' => ['class' => 'navbar-nav navbar-right'],
     ]);
 }
-?>
 
-<?php
 if (Yii::$app->user->isGuest) {
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-left'],
