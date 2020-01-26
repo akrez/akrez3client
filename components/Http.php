@@ -174,10 +174,7 @@ class Http extends Component
 
     public static function basketAdd($id, $cnt)
     {
-        return self::post('basket-add', [], [
-                    'package_id' => $id,
-                    'cnt' => $cnt,
-        ]);
+        return self::post('basket-add', ['cnt' => $cnt], ['package_id' => $id,]);
     }
 
 }

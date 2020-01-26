@@ -18,6 +18,7 @@ foreach (Yii::$app->view->params['baskets'] as $basket) {
     $model['color'] = $package['color'];
     $model['guaranty'] = $package['guaranty'];
     $model['des'] = $package['des'];
+    $model['package_id'] = $package['id'];
     $models[] = $model;
 }
 
@@ -55,7 +56,21 @@ $dataProvider = new ArrayDataProvider([
             'guaranty',
             'des',
             'price:price',
-            'cnt',
+            [
+                'attribute' => Yii::t('app', 'cnt'),
+                'value' => function ($model, $key, $index, $grid) {
+                    $r = [];
+                    $r[] = Html::beginForm(
+                                    BlogHelper::url('site/basket-add', ['id' => $model['package_id']]),
+                                    'GET'
+                    );
+                    $btnUpdate = '<button type="submit" class="btn btn-primary btn-social" style="height: 34px;">' . Yii::t('app', 'Update') . '</button>';
+                    $r[] = '<div class="input-group"> ' . Html::input('number', 'cnt', $model['cnt'], ['class' => 'form-control', 'min' => '1',]) . ' <span class="input-group-btn">' . $btnUpdate . ' </span> </div> ';
+                    $r[] = Html::endForm();
+                    return implode(' ', $r);
+                },
+                'format' => 'raw',
+            ],
             [
                 'label' => '',
                 'format' => 'raw',
