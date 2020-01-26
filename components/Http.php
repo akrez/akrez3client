@@ -160,4 +160,8 @@ class Http extends Component
         ]);
     }
 
+    public static function basket()
+    {
+        return self::post('basket');
+    }
 }

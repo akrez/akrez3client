@@ -25,7 +25,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['signout'],
+                        'actions' => ['signout', 'basket'],
                         'allow' => true,
                         'verbs' => ['GET', 'POST'],
                         'roles' => ['@'],
@@ -163,6 +163,12 @@ class SiteController extends Controller
     {
         $this->view->params = Http::product($id, Yii::$app->request->get());
         return $this->render('product');
+    }
+
+    public function actionBasket()
+    {
+        $this->view->params = Http::basket();
+        return $this->render('basket');
     }
 
 }

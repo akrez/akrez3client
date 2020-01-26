@@ -1,10 +1,8 @@
 <?php
 
-namespace common\models;
+namespace app\models;
 
 use Yii;
-use yii\db\ActiveQuery;
-use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "invoice".
@@ -28,8 +26,24 @@ use yii\helpers\ArrayHelper;
  * @property Basket[] $baskets
  * @property Customer $customer
  */
-class Invoice extends ActiveRecord
+class Invoice extends Model
 {
+
+    public $id;
+    public $created_at;
+    public $updated_at;
+    public $status;
+    public $name;
+    public $province;
+    public $address;
+    public $mobile;
+    public $phone;
+    public $des;
+    public $receive_from;
+    public $receive_until;
+    public $price;
+    public $blog_name;
+    public $customer_id;
 
     const STATUS_UNVERIFIED = 0;
     const STATUS_VERIFIED = 1;
@@ -56,17 +70,11 @@ class Invoice extends ActiveRecord
         return (isset($list[$item]) ? $list[$item] : null);
     }
 
-    public static function tableName()
-    {
-        return 'invoice';
-    }
-
     public function rules()
     {
         return [
             [['!status', '!blog_name', '!customer_id', '!price', 'name', 'province', 'address', 'mobile', 'phone'], 'required'],
             [['name'], 'string', 'max' => 31],
-            [['province'], 'in', 'range' => array_keys(Province::getList())],
             [['address'], 'string', 'max' => 1024],
             [['mobile'], 'match', 'pattern' => '/^09[0-9]{9}$/'],
             [['phone'], 'match', 'pattern' => '/^[1-9]{1}[0-9]{5,8}$/'],
@@ -74,38 +82,6 @@ class Invoice extends ActiveRecord
             //
             [['receive_from', 'receive_until'], 'string', 'max' => 24],
         ];
-    }
-
-    public function setPriceByArrayOfBasketsAndPackages($baskets, $packages)
-    {
-        $price = 0;
-        $packages = ArrayHelper::index($packages, 'id');
-        try {
-            foreach ($baskets as $basket) {
-                $basket = (array) $basket;
-                $package = (array) $packages[$basket['package_id']];
-                $price = $price + ($basket['cnt'] * $package['price']);
-            }
-        } catch (Exception $ex) {
-            
-        }
-        return $this->price = $price;
-    }
-
-    /**
-     * @return ActiveQuery
-     */
-    public function getBaskets()
-    {
-        return $this->hasMany(Basket::className(), ['invoice_id' => 'id']);
-    }
-
-    /**
-     * @return ActiveQuery
-     */
-    public function getCustomer()
-    {
-        return $this->hasOne(Customer::className(), ['id' => 'customer_id']);
     }
 
 }

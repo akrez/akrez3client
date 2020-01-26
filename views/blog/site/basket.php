@@ -1,25 +1,11 @@
 <?php
 
-use common\models\BasketItem;
-use common\models\Invoice;
-use common\models\Province;
+use app\components\BlogHelper;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 $this->title = Yii::t('app', 'Basket');
-
-$models = [];
-foreach ($dp['baskets'] as $basket) {
-    $package = $dp['packages'][$basket['package_id']];
-    $product = $dp['products'][$package['product_id']];
-    $model = new BasketItem();
-    $model->load($package, '');
-    $model->image = $product['image'];
-    $model->title = $product['title'];
-    $model->cnt = $basket['cnt'];
-    $models[] = $model;
-}
 ?>
 
 <div class="row">
@@ -28,7 +14,7 @@ foreach ($dp['baskets'] as $basket) {
     </div>
 </div>
 
-<?php if (empty($models)): ?>
+<?php if (empty(Yii::$app->view->params['baskets'])): ?>
     <div class="row">
         <div class="col-sm-12 pb20">
             <?= Yii::t('yii', 'No results found.'); ?>
@@ -37,14 +23,14 @@ foreach ($dp['baskets'] as $basket) {
 <?php else: ?>
     <div class="row">
         <div class="col-sm-12 pb20">
-            <?= $this->render('_basket_table', ['models' => $models, 'editable' => true]) ?>
+            <?= $this->render('_basket_table') ?>
         </div>
     </div>
     <?php
-    $model = new Invoice();
-    if ($dp['invoice'] !== null) {
-        $model->setAttributes($dp['invoice']);
-        $model->addErrors($dp['errors']);
+    $model = new app\models\Invoice();
+    if (Yii::$app->view->params['invoice'] !== null) {
+        $model->setAttributes(Yii::$app->view->params['invoice']);
+        $model->addErrors(Yii::$app->view->params['errors']);
     }
     $form = ActiveForm::begin([
                 'method' => 'get',
@@ -65,7 +51,7 @@ foreach ($dp['baskets'] as $basket) {
             <div class="row">
                 <?php
                 echo $form->field($model, 'province', ['options' => ['class' => 'col-sm-3'], 'template' => "{input}\n{hint}\n{error}"])->widget(Select2::classname(), [
-                    'data' => Province::getList(),
+                    'data' => BlogHelper::getConstant('province'),
                     'hideSearch' => false,
                     'options' => [
                         'placeholder' => $model->getAttributeLabel('province'),
