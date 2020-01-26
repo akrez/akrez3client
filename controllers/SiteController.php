@@ -25,7 +25,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['signout', 'basket'],
+                        'actions' => ['signout', 'basket', 'basket-remove'],
                         'allow' => true,
                         'verbs' => ['GET', 'POST'],
                         'roles' => ['@'],
@@ -169,6 +169,12 @@ class SiteController extends Controller
     {
         $this->view->params = Http::basket();
         return $this->render('basket');
+    }
+
+    public function actionBasketRemove($id)
+    {
+        $this->view->params = Http::basketRemove($id);
+        return $this->redirect(BlogHelper::url('basket'));
     }
 
 }

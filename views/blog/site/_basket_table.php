@@ -10,6 +10,7 @@ foreach (Yii::$app->view->params['baskets'] as $basket) {
     $package = Yii::$app->view->params['packages'][$basket['package_id']];
     $product = Yii::$app->view->params['products'][$package['product_id']];
     //
+    $model['id'] = $package['id'];
     $model['image'] = $product['image'];
     $model['title'] = $product['title'];
     $model['cnt'] = $basket['cnt'];
@@ -55,6 +56,13 @@ $dataProvider = new ArrayDataProvider([
             'des',
             'price:price',
             'cnt',
+            [
+                'label' => '',
+                'format' => 'raw',
+                'value' => function ($model, $key, $index, $grid) {
+                    return '<a class="btn btn-danger btn-block btn-social" style="height: 34px;" href="' . BlogHelper::url('site/basket-remove', ['id' => $model['id']]) . '" data-confirm="' . Yii::t('yii', 'Are you sure you want to delete this item?') . '">' . Yii::t('app', 'Remove') . '</a> <div class="help-block"></div>';
+                },
+            ],
         ],
     ]);
     ?>
