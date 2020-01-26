@@ -25,7 +25,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['signout', 'basket', 'basket-remove'],
+                        'actions' => ['signout', 'basket', 'basket-remove', 'basket-add',],
                         'allow' => true,
                         'verbs' => ['GET', 'POST'],
                         'roles' => ['@'],
@@ -175,6 +175,18 @@ class SiteController extends Controller
     {
         $this->view->params = Http::basketRemove($id);
         return $this->redirect(BlogHelper::url('basket'));
+    }
+
+    public function actionBasketAdd($id, $cnt = null)
+    {
+        $this->view->params = Http::basketAdd($id, $cnt);
+        if (empty($this->view->params['errors'])) {
+            return $this->redirect(BlogHelper::url('site/basket'));
+        }
+        if (isset($this->view->params['package']['product_id'])) {
+            return $this->redirect(BlogHelper::url('site/product', ['id' => $this->view->params['package']['product_id']]));
+        }
+        throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
     }
 
 }

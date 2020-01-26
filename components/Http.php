@@ -168,7 +168,15 @@ class Http extends Component
     public static function basketRemove($id)
     {
         return self::post('basket-remove', [], [
-                    'package_id' => $id
+                    'package_id' => $id,
+        ]);
+    }
+
+    public static function basketAdd($id, $cnt)
+    {
+        return self::post('basket-add', [], [
+                    'package_id' => $id,
+                    'cnt' => $cnt,
         ]);
     }
 
