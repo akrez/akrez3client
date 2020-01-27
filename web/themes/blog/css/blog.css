@@ -70,3 +70,7 @@ a.desc:before {
 .sort-ordinal a.desc:after {
     content: "\e156";
 }
+
+div.grid-view table td {
+    vertical-align: middle;
+}

@@ -1,6 +1,7 @@
 <?php
 
 use app\components\BlogHelper;
+use app\models\Invoice;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -27,13 +28,8 @@ $this->title = Yii::t('app', 'Basket');
         </div>
     </div>
     <?php
-    $model = new app\models\Invoice();
-    if (Yii::$app->view->params['invoice'] !== null) {
-        $model->setAttributes(Yii::$app->view->params['invoice']);
-        $model->addErrors(Yii::$app->view->params['errors']);
-    }
     $form = ActiveForm::begin([
-                'method' => 'get',
+                'method' => 'POST',
                 'fieldConfig' => [
                     'template' => '<div class="input-group">{label}{input}</div>{error}',
                     'labelOptions' => ['class' => 'input-group-addon'],

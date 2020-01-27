@@ -177,4 +177,18 @@ class Http extends Component
         return self::post('basket-add', ['cnt' => $cnt], ['package_id' => $id,]);
     }
 
+    public static function invoiceAdd($invoice)
+    {
+        return self::post('invoice-add', [
+                    'Invoice' => [
+                        'name' => $invoice->name,
+                        'phone' => $invoice->phone,
+                        'mobile' => $invoice->mobile,
+                        'province' => $invoice->province,
+                        'address' => $invoice->address,
+                        'des' => $invoice->des,
+                    ]
+        ]);
+    }
+
 }

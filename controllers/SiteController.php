@@ -7,6 +7,8 @@ use Yii;
 use app\components\Http;
 use app\models\Customer;
 use yii\helpers\Url;
+use app\models\Invoice;
+use yii\web\NotFoundHttpException;
 
 class SiteController extends Controller
 {
@@ -167,8 +169,21 @@ class SiteController extends Controller
 
     public function actionBasket()
     {
-        $this->view->params = Http::basket();
-        return $this->render('basket');
+        $invoice = new Invoice();
+        if ($invoice->load(Yii::$app->request->post())) {
+            $this->view->params = Http::invoiceAdd($invoice);
+            if ($this->view->params['errors']) {
+                $invoice->load($this->view->params, 'invoice');
+                $invoice->addErrors($this->view->params['errors']);
+            } else {
+                return $this->redirect(BlogHelper::url('site/invoice'));
+            }
+        } else {
+            $this->view->params = Http::basket();
+        }
+        return $this->render('basket', [
+                    'model' => $invoice,
+        ]);
     }
 
     public function actionBasketRemove($id)
