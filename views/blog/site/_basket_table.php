@@ -75,7 +75,7 @@ $dataProvider = new ArrayDataProvider([
                 'label' => '',
                 'format' => 'raw',
                 'value' => function ($model, $key, $index, $grid) {
-                    return '<a class="btn btn-danger btn-block btn-social" href="' . BlogHelper::url('site/basket-remove', ['id' => $model['id']]) . '" data-confirm="' . Yii::t('yii', 'Are you sure you want to delete this item?') . '">' . Yii::t('app', 'Remove') . '</a> <div class="help-block"></div>';
+                    return '<a class="btn btn-danger btn-block btn-social" href="' . BlogHelper::url('site/basket-remove', ['id' => $model['id']]) . '" data-confirm="' . Yii::t('yii', 'Are you sure you want to delete this item?') . '">' . Yii::t('app', 'Remove') . '</a>';
                 },
             ],
         ],
