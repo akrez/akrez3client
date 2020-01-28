@@ -36,13 +36,13 @@ class BlogHelper extends Component
             self::$constant = Http::constant(Yii::$app->blog->attribute('constant_id'));
         }
         $value = self::$constant;
-        if ($level1) {
+        if (!empty(strlen($level1))) {
             $value = $value[$level1];
         }
-        if ($level2) {
+        if (!empty(strlen($level2))) {
             $value = $value[$level2];
         }
-        if ($level3) {
+        if (!empty(strlen($level3))) {
             $value = $value[$level3];
         }
         return $value;

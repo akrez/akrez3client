@@ -33,7 +33,7 @@ return [
     'PackageItem' => 'جزئیات شرایط فروش',
     'Package' => 'شرایط فروش',
     'Blog' => 'فروشگاه‌',
-    'Invoice' => 'فاکتور',
+    'Invoice' => 'فاکتورهای من',
     //
     'Blogs' => 'فروشگاه‌ها',
     'Create {name}' => 'ایجاد {name} ',

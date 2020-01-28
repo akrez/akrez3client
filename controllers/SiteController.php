@@ -27,7 +27,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['signout', 'basket', 'basket-remove', 'basket-add',],
+                        'actions' => ['signout', 'basket', 'basket-remove', 'basket-add', 'invoice', 'invoice-view', 'invoice-remove',],
                         'allow' => true,
                         'verbs' => ['GET', 'POST'],
                         'roles' => ['@'],
@@ -202,6 +202,12 @@ class SiteController extends Controller
             return $this->redirect(BlogHelper::url('site/product', ['id' => $this->view->params['package']['product_id']]));
         }
         throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
+    }
+
+    public function actionInvoice()
+    {
+        $this->view->params = Http::invoice(Yii::$app->request->get());
+        return $this->render('invoice');
     }
 
 }

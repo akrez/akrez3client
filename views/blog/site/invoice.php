@@ -1,16 +1,26 @@
 <?php
 
 use app\components\BlogHelper;
-use app\components\Helper;
-use app\models\Invoice;
 use yii\data\ArrayDataProvider;
+use yii\data\Pagination;
+use yii\grid\GridView;
+use yii\widgets\LinkPager;
 
 $this->title = Yii::t('app', 'Invoice');
 
 $dataProvider = new ArrayDataProvider([
     'allModels' => Yii::$app->view->params['invoices'],
     'modelClass' => 'app\models\Model',
-]);
+    'sort' => false,
+    'pagination' => false,
+        ]);
+
+$pagination = new Pagination([
+    'pageSizeParam' => 'page_size',
+    'pageSize' => Yii::$app->view->params['pagination']['page_size'],
+    'page' => Yii::$app->view->params['pagination']['page'],
+    'totalCount' => Yii::$app->view->params['pagination']['total_count'],
+        ]);
 ?>
 
 <div class="row">
@@ -27,50 +37,37 @@ $dataProvider = new ArrayDataProvider([
     </div>
 <?php else: ?>
     <div class="row">
-        <div class="col-sm-12 pb20">
+        <div class="col-sm-12">
 
             <div class="table-responsive">
                 <?=
-                TableView::widget([
-                    'models' => $models,
-                    'sort' => false,
-                    'filterModel' => null,
-                    'footerModel' => null,
-                    'rowOptions' => function ($model, $key, $index, $grid) {
-                        return [
-                            'action' => null,
-                            'method' => 'get',
-                        ];
-                    },
+                GridView::widget([
+                    'dataProvider' => $dataProvider,
                     'columns' => [
                         'id',
                         'updated_at:datetimefa',
                         'name',
-                        [
-                            'attribute' => 'price',
-                            'value' => function ($model, $key, $index, $grid) {
-                                return Helper::formatPrice(intval($model->price));
-                            },
-                        ],
+                        'price:price',
                         [
                             'attribute' => 'status',
                             'value' => function ($model, $key, $index, $grid) {
-                                return Invoice::statuseLabel($model->status);
+                                return BlogHelper::getConstant('invoiceStatuses', $model['status']);
                             },
                         ],
                         [
                             'label' => '',
                             'format' => 'raw',
-                            'value' => function ($model, $key, $index, $grid, $form) {
-                                return '<a class="btn btn-primary btn-block btn-social" style="height: 34px;" href="' . BlogHelper::url('site/invoice-view', ['id' => $model->id]) . '" >' . Yii::t('app', 'View') . '</a>';
+                            'value' => function ($model, $key, $index, $grid) {
+                                return '<a class="btn btn-primary btn-block btn-social" href="' . BlogHelper::url('site/invoice-view', ['id' => $model['id']]) . '" >' . Yii::t('app', 'View') . '</a>';
                             },
                         ],
                         [
                             'label' => '',
                             'format' => 'raw',
-                            'value' => function ($model, $key, $index, $grid, $form) {
-                                if (in_array($model->status, [Invoice::STATUS_VERIFIED, Invoice::STATUS_UNVERIFIED])) {
-                                    return '<a class="btn btn-danger btn-block btn-social" style="height: 34px;" href="' . BlogHelper::url('site/invoice-remove', ['id' => $model->id]) . '" data-confirm="' . Yii::t('yii', 'Are you sure you want to delete this item?') . '">' . Yii::t('app', 'Remove') . '</a>';
+                            'value' => function ($model, $key, $index, $grid ) {
+                                //Invoice::STATUS_VERIFIED, Invoice::STATUS_UNVERIFIED
+                                if (in_array($model['status'], [0, 1])) {
+                                    return '<a class="btn btn-danger btn-block btn-social" href="' . BlogHelper::url('site/invoice-remove', ['id' => $model['id']]) . '" data-confirm="' . Yii::t('yii', 'Are you sure you want to delete this item?') . '">' . Yii::t('app', 'Remove') . '</a>';
                                 }
                                 return '';
                             },
@@ -79,6 +76,20 @@ $dataProvider = new ArrayDataProvider([
                 ]);
                 ?>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <?=
+            LinkPager::widget([
+                'hideOnSinglePage' => false,
+                'pagination' => new Pagination([
+                    'page' => Yii::$app->view->params['pagination']['page'],
+                    'pageSize' => Yii::$app->view->params['pagination']['page_size'],
+                    'totalCount' => Yii::$app->view->params['pagination']['total_count'],
+                        ]),
+            ]);
+            ?>
         </div>
     </div>
 <?php endif; ?>

@@ -191,4 +191,9 @@ class Http extends Component
         ]);
     }
 
+    public static function invoice($params)
+    {
+        return self::post('invoice', $params);
+    }
+
 }
