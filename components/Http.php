@@ -196,4 +196,17 @@ class Http extends Component
         return self::post('invoice', $params);
     }
 
+    public static function invoiceRemove($id)
+    {
+        return self::post('invoice-remove', [], [
+                    'id' => $id,
+        ]);
+    }
+
+    public static function invoiceView($id)
+    {
+        return self::post('invoice-view', [], [
+                    'id' => $id,
+        ]);
+    }
 }

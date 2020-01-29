@@ -24,7 +24,7 @@ $this->title = Yii::t('app', 'Basket');
 <?php else: ?>
     <div class="row">
         <div class="col-sm-12 pb20">
-            <?= $this->render('_basket_table') ?>
+            <?= $this->render('_basket_table', ['editable' => true]) ?>
         </div>
     </div>
     <?php

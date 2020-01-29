@@ -210,4 +210,15 @@ class SiteController extends Controller
         return $this->render('invoice');
     }
 
+    public function actionInvoiceRemove($id)
+    {
+        $this->view->params = Http::invoiceRemove($id);
+        return $this->redirect(BlogHelper::url('invoice'));
+    }
+
+    public function actionInvoiceView($id)
+    {
+        $this->view->params = Http::invoiceView($id);
+        return $this->render('invoice-view');
+    }
 }

@@ -5,6 +5,8 @@ use yii\data\ArrayDataProvider;
 use yii\grid\GridView;
 use yii\helpers\Html;
 
+$editable = (!isset($editable) ? false : $editable);
+
 $models = [];
 foreach (Yii::$app->view->params['baskets'] as $basket) {
     $package = Yii::$app->view->params['packages'][$basket['package_id']];
@@ -27,7 +29,7 @@ $dataProvider = new ArrayDataProvider([
     'modelClass' => 'app\models\Model',
     'sort' => false,
     'pagination' => false,
-        ]);
+]);
 ?>
 
 <div class="table-responsive">
@@ -58,6 +60,10 @@ $dataProvider = new ArrayDataProvider([
             'price:price',
             [
                 'attribute' => Yii::t('app', 'cnt'),
+                'visible' => !$editable,
+            ],
+            [
+                'attribute' => Yii::t('app', 'cnt'),
                 'value' => function ($model, $key, $index, $grid) {
                     $r = [];
                     $r[] = Html::beginForm(
@@ -70,6 +76,7 @@ $dataProvider = new ArrayDataProvider([
                     return implode(' ', $r);
                 },
                 'format' => 'raw',
+                'visible' => $editable,
             ],
             [
                 'label' => '',
@@ -77,6 +84,7 @@ $dataProvider = new ArrayDataProvider([
                 'value' => function ($model, $key, $index, $grid) {
                     return '<a class="btn btn-danger btn-block btn-social" href="' . BlogHelper::url('site/basket-remove', ['id' => $model['id']]) . '" data-confirm="' . Yii::t('yii', 'Are you sure you want to delete this item?') . '">' . Yii::t('app', 'Remove') . '</a>';
                 },
+                'visible' => $editable,
             ],
         ],
     ]);
