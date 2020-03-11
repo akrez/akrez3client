@@ -16,7 +16,7 @@ class BlogHelper extends Component
         if (Yii::$app->params['isParked']) {
             return Url::to([$action] + $config);
         } else {
-            return Url::to([$action, '_blog' => Yii::$app->params['blogName']] + $config);
+            return Url::to([$action] + $config);
         }
     }
 

@@ -23,9 +23,6 @@ use yii\web\UnsupportedMediaTypeHttpException;
 class Http extends Component
 {
 
-    private static $baseUrl = 'http://localhost/akrez3/api/v1/';
-    private static $baseGalleryUrl = 'http://localhost/akrez3/site/gallery/';
-
     private static function buildUrl($url, $params = [])
     {
         $user = Yii::$app->user->getIdentity();
@@ -33,13 +30,13 @@ class Http extends Component
             $params['_token'] = $user->token;
         }
         $params['_blog'] = Yii::$app->params['blogName'];
-        return self::$baseUrl . $url . ($params ? '?' . http_build_query($params) : '');
+        return Yii::$app->params['apiBaseUrl'] . $url . ($params ? '?' . http_build_query($params) : '');
     }
 
     private static function post($url, $postData = [], $params = [])
     {
         $fullUrl = self::buildUrl($url, $params);
-        $data = (new Client())->createRequest()->setMethod('POST')->setUrl($fullUrl)->setData($postData)->send()->getData();
+        $data = (new Client(['transport' => 'yii\httpclient\CurlTransport']))->createRequest()->setMethod('POST')->setUrl($fullUrl)->setData($postData)->send()->getData();
         switch ($data['code']) {
             case 200:
                 Yii::$app->blog->setIdentity($data['_blog']);
@@ -76,14 +73,14 @@ class Http extends Component
         //
         $basePath = Yii::getAlias("@webroot/gallery/$type/$whq");
         $path = "$basePath/$name";
-        $apiUrl = self::$baseGalleryUrl . "$type/$whq/$name";
+        $apiUrl = Yii::$app->params['apiBaseGalleryUrl'] . "$type/$whq/$name";
         $url = Yii::getAlias("@web") . "/gallery/$type/$whq/$name";
         //
         if (file_exists($path)) {
             return $url;
         }
         //
-        $response = (new Client())->createRequest()->setMethod('GET')->setUrl($apiUrl)->send();
+        $response = (new Client(['transport' => 'yii\httpclient\CurlTransport']))->createRequest()->setMethod('GET')->setUrl($apiUrl)->send();
         if ($response->statusCode == 200) {
             file_exists($basePath) || mkdir($basePath, '755', true);
             file_put_contents($path, $response->getContent());
@@ -98,7 +95,7 @@ class Http extends Component
             return json_decode(file_get_contents($path), true);
         }
         $fullUrl = self::buildUrl('constant');
-        $data = (new Client())->createRequest()->setMethod('POST')->setUrl($fullUrl)->send()->getData();
+        $data = (new Client(['transport' => 'yii\httpclient\CurlTransport']))->createRequest()->setMethod('POST')->setUrl($fullUrl)->send()->getData();
         file_put_contents($path, json_encode($data));
         return $data;
     }
@@ -209,4 +206,5 @@ class Http extends Component
                     'id' => $id,
         ]);
     }
+
 }

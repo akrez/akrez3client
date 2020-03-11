@@ -40,10 +40,10 @@ if ($params['params']['isParked']) {
     ];
 } else {
     $rules = [
-        '/<_blog:[\w\-]+>/gallery/<type:\w+>/<whq>/<name:[\w\.]+>' => 'site/gallery',
-        '/<_blog:[\w\-]+>/<action:[\w\-]+>/<id>' => 'site/<action>',
-        '/<_blog:[\w\-]+>/<action:[\w\-]+>' => 'site/<action>',
-        '/<_blog:[\w\-]+>' => 'site/index',
+        '/gallery/<type:\w+>/<whq>/<name:[\w\.]+>' => 'site/gallery',
+        '/<action:[\w\-]+>/<id>' => 'site/<action>',
+        '/<action:[\w\-]+>' => 'site/<action>',
+        '/' => 'site/index',
     ];
 }
 
