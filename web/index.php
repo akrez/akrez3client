@@ -19,8 +19,8 @@ function ed($input)
     die;
 }
 
-defined('YII_DEBUG') or define('YII_DEBUG', true);
-defined('YII_ENV') or define('YII_ENV', 'dev');
+defined('YII_DEBUG') or define('YII_DEBUG', false);
+defined('YII_ENV') or define('YII_ENV', 'prod');
 defined('BASE_PATH') or define('BASE_PATH', dirname(__DIR__));
 defined('VENDOR_PATH') or define('VENDOR_PATH', BASE_PATH . '/vendor');
 defined('APP_NAME') or define('APP_NAME', 'اکــرز');
@@ -62,6 +62,26 @@ $config = [
         '@npm' => '@vendor/npm-asset',
     ],
     'components' => [
+        'assetManager' => [
+            'class' => 'yii\web\AssetManager',
+            'bundles' => [
+                'yii\web\JqueryAsset' => [
+                    'js' => [
+                        YII_ENV !== 'prod' ? 'jquery.js' : 'jquery.min.js'
+                    ]
+                ],
+                'yii\bootstrap\BootstrapAsset' => [
+                    'css' => [
+                        YII_ENV !== 'prod' ? 'css/bootstrap.css' : 'css/bootstrap.min.css',
+                    ]
+                ],
+                'yii\bootstrap\BootstrapPluginAsset' => [
+                    'js' => [
+                        YII_ENV !== 'prod' ? 'js/bootstrap.js' : 'js/bootstrap.min.js',
+                    ]
+                ]
+            ],
+        ],
         'db' => $params['db'],
         'cache' => [
             'class' => 'yii\caching\FileCache',
