@@ -6,8 +6,9 @@ use yii\helpers\HtmlPurifier;
 ?>
 
 <div class="v1-default-index">
-    <h1 class="mt0"> <?= HtmlPurifier::process(Yii::$app->blog->attribute('title')) ?> <small> <?= Yii::$app->blog->attribute('slug') ?> </small> </h1>
-    <p style="text-align: justify;"><?= Yii::$app->blog->attribute('des') ?></p>
+    <h1 class="mt0" style="display: inline-block;"><?= HtmlPurifier::process(Yii::$app->blog->attribute('title')) ?></h1>
+    <h2 class="mt0" style="display: inline-block;margin-right: 10px;"><small><?= Yii::$app->blog->attribute('slug') ?></small></h2>
+    <h5 class="mt0" style="text-align: justify;line-height: 1.62em;font-size: 14px;"><?= Yii::$app->blog->attribute('des') ?></h5>
 </div>
 
 <div class="row pt20 pb20">
@@ -25,4 +26,4 @@ use yii\helpers\HtmlPurifier;
     <?= Html::endForm(); ?>
 </div>
 
-<?= $this->render('_products_container')  ?>
+<?= $this->render('_products_container') ?>

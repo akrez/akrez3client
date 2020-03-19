@@ -65,7 +65,7 @@ class SiteController extends Controller
         }
         foreach ($result['products'] as $productId => $product) {
             $xmlurl = $sitemap->addChild('url');
-            $xmlurl->addChild('loc', BlogHelper::url('site/product', ['id' => $productId], true));
+            $xmlurl->addChild('loc', BlogHelper::url('site/product', ['id' => $product['id']], true));
             $xmlurl->addChild('priority', 0.6);
         }
 

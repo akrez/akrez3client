@@ -149,7 +149,7 @@ $constant = BlogHelper::getConstant();
                 <?php
                 foreach (Yii::$app->view->params['_categories'] as $id => $title) {
                     $url = BlogHelper::url('site/category', ['id' => $id]);
-                    echo Html::a($title, $url, ['class' => 'btn btn-default']);
+                    echo '<a class="btn btn-default" href="' . HtmlPurifier::process($url) . '"><h4 class="h4mainmenu">' . HtmlPurifier::process($title) . '</h4></a>';
                 }
                 ?>
             </div>
