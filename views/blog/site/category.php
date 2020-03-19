@@ -3,7 +3,8 @@
 use app\components\BlogHelper;
 use yii\helpers\HtmlPurifier;
 use yii\widgets\Breadcrumbs;
-$this->title = Yii::$app->blog->attribute('title') . ' | ' . Yii::$app->view->params['_categories'][Yii::$app->view->params['categoryId']];
+
+$this->title = Yii::$app->view->params['_categories'][Yii::$app->view->params['categoryId']];
 ?>
 
 <?=

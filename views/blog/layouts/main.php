@@ -8,6 +8,7 @@ use yii\widgets\Spaceless;
 
 BlogAsset::register($this);
 $blogLogo = BlogHelper::getImage('logo', '32', Yii::$app->blog->attribute('logo'));
+$titleParts = array_filter(array_unique(array_map("trim", [Yii::$app->blog->attribute('title'), Yii::$app->blog->attribute('slug'), $this->title])));
 ?>
 <?php $this->beginPage() ?>
 <?php Spaceless::begin(); ?>
@@ -20,7 +21,7 @@ $blogLogo = BlogHelper::getImage('logo', '32', Yii::$app->blog->attribute('logo'
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <?= Yii::$app->view->registerLinkTag(['rel' => 'icon', 'href' => $blogLogo]) ?>
         <?= Html::csrfMetaTags() ?>
-        <title><?= Html::encode($this->title ? $this->title : Yii::$app->blog->attribute('title')) ?></title>
+        <title><?= Html::encode(implode(' | ', $titleParts)) ?></title>
         <?php $this->head() ?>
     </head>
 

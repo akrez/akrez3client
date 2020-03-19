@@ -6,7 +6,7 @@ use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
 use yii\widgets\Breadcrumbs;
 
-$this->title = Yii::$app->blog->attribute('title') . ' | ' . Yii::$app->view->params['product']['title'];
+$this->title = Yii::$app->view->params['product']['title'];
 
 $this->registerCss("
     .carousel-indicators li {
