@@ -34,6 +34,7 @@ $params = require(__DIR__ . '/../config/params.php');
 
 if ($params['params']['isParked']) {
     $rules = [
+        '/robots.txt' => 'site/robots',
         '/sitemap.xml' => 'site/sitemap',
         '/gallery/<type:\w+>/<whq>/<name:[\w\.]+>' => 'site/gallery',
         '/<action:[\w\-]+>/<id>' => 'site/<action>',
@@ -42,6 +43,7 @@ if ($params['params']['isParked']) {
     ];
 } else {
     $rules = [
+        '/robots.txt' => 'site/robots',
         '/sitemap.xml' => 'site/sitemap',
         '/gallery/<type:\w+>/<whq>/<name:[\w\.]+>' => 'site/gallery',
         '/<action:[\w\-]+>/<id>' => 'site/<action>',
