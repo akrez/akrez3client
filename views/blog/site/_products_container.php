@@ -63,7 +63,7 @@ $pagination = new Pagination([
 
                     <?php
                     if ($product['image']):
-                        echo Html::img(BlogHelper::getImage('product', '400', $product['image']), ['class' => 'img img-responsive', 'style' => 'margin-left: auto; margin-right: auto; padding: 9px 9px 0;']);
+                        echo Html::img(BlogHelper::getImage('product', '400', $product['image']), ['class' => 'img img-responsive', 'style' => 'margin-left: auto; margin-right: auto; padding: 9px 9px 0;', 'alt'=> HtmlPurifier::process($product['title'])]);
                     endif;
                     ?>
 

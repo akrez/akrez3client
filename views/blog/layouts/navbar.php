@@ -62,7 +62,7 @@ if (Yii::$app->user->isGuest) {
         <?= Html::hiddenInput('Search[title][0][operation]', 'LIKE') ?>
     </div>
     <span class="input-group-btn">
-        <?= Html::submitButton('<span class="glyphicon glyphicon-search" aria-hidden="true"></span>', ['style' => 'height: 34px;', 'class' => 'btn btn-default']); ?>
+        <?= Html::submitButton('<span class="glyphicon glyphicon-search" aria-hidden="true" style="font-size: 18px;"></span>', ['style' => 'height: 34px;', 'class' => 'btn btn-default']); ?>
     </span>
 </div>
 <?= Html::endForm(); ?>

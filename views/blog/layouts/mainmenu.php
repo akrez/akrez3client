@@ -3,6 +3,7 @@
 use app\components\BlogHelper;
 use app\models\FieldList;
 use yii\helpers\Html;
+use yii\helpers\HtmlPurifier;
 use yii\web\View;
 
 $this->registerJs('
@@ -18,7 +19,7 @@ $constant = BlogHelper::getConstant();
     <div class="row pb20">
         <div class="col-sm-12">
             <?php
-            $logo = Html::img($blogLogo, ['style' => 'margin: auto;', 'class' => 'img-responsive img-rounded']);
+            $logo = Html::img($blogLogo, ['style' => 'margin: auto;', 'class' => 'img-responsive img-rounded', 'alt' => HtmlPurifier::process(Yii::$app->blog->attribute('title'))]);
             echo Html::a($logo, BlogHelper::blogFirstPageUrl(), ['style' => 'text-align: center;']);
             ?>
         </div>
@@ -80,7 +81,7 @@ $constant = BlogHelper::getConstant();
 
                     <div class="col-sm-12 pb20">
                         <?= Html::hiddenInput($namePrefix . '[operation]', '='); ?>
-                        <?= Html::checkbox($namePrefix . '[value]', strval($filter['value']), Yii::$app->view->params['_categories'], ['separator' => ' ']); ?>
+                        <?= Html::checkbox($namePrefix . '[value]', strval($filter['value']), [], ['separator' => ' ']); ?>
                         <?= Html::tag('label', $field['title'], ['class' => 'control-label', 'style' => 'margin-top: 3px;margin-bottom: 2px;']) ?>
                     </div>
 
@@ -148,7 +149,7 @@ $constant = BlogHelper::getConstant();
                 <?php
                 foreach (Yii::$app->view->params['_categories'] as $id => $title) {
                     $url = BlogHelper::url('site/category', ['id' => $id]);
-                    echo Html::a($title, $url, ['type' => 'button', 'class' => 'btn btn-default']);
+                    echo Html::a($title, $url, ['class' => 'btn btn-default']);
                 }
                 ?>
             </div>

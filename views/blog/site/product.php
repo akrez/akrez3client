@@ -83,7 +83,7 @@ Breadcrumbs::widget([
                 <?php
                 $i = 0;
                 foreach (Yii::$app->view->params['images'] as $imageKey => $image):
-                    echo '<div class="' . ($i == 0 ? 'item active' : 'item') . '"> <img src="' . BlogHelper::getImage('product', '400', $image['name']) . '" class=""> </div>';
+                    echo '<div class="' . ($i == 0 ? 'item active' : 'item') . '"> <img src="' . BlogHelper::getImage('product', '400', $image['name']) . '" alt="' . HtmlPurifier::process(Yii::$app->view->params['product']['title']) . '"> </div>';
                     $i++;
                 endforeach;
                 ?>
