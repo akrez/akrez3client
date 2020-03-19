@@ -34,14 +34,15 @@ $params = require(__DIR__ . '/../config/params.php');
 
 if ($params['params']['isParked']) {
     $rules = [
-        '/site/gallery/<type:\w+>/<whq>/<name:[\w\.]+>' => 'site/gallery',
-        '/<controller:[\w\-]+>/<action:[\w\-]+>/<id:\d+>' => '<controller>/<action>',
-        '/<controller:[\w\-]+>/<action:[\w\-]+>' => '<controller>/<action>',
-        '/<controller:[\w\-]+>' => '<controller>/index',
+        '/sitemap.xml' => 'site/sitemap',
+        '/gallery/<type:\w+>/<whq>/<name:[\w\.]+>' => 'site/gallery',
+        '/<action:[\w\-]+>/<id>' => 'site/<action>',
+        '/<action:[\w\-]+>' => 'site/<action>',
         '/' => 'site/index',
     ];
 } else {
     $rules = [
+        '/sitemap.xml' => 'site/sitemap',
         '/gallery/<type:\w+>/<whq>/<name:[\w\.]+>' => 'site/gallery',
         '/<action:[\w\-]+>/<id>' => 'site/<action>',
         '/<action:[\w\-]+>' => 'site/<action>',
