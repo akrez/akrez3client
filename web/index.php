@@ -19,6 +19,8 @@ function ed($input)
     die;
 }
 
+ini_set('allow_url_fopen', 1);
+
 defined('YII_DEBUG') or define('YII_DEBUG', false);
 defined('YII_ENV') or define('YII_ENV', 'prod');
 defined('BASE_PATH') or define('BASE_PATH', dirname(__DIR__));
