@@ -25,7 +25,7 @@ class SiteController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['error', 'index', 'category', 'product', 'sitemap'],
+                        'actions' => ['error', 'index', 'category', 'product', 'sitemap', 'robots',],
                         'allow' => true,
                     ],
                     [
@@ -45,6 +45,18 @@ class SiteController extends Controller
                 'layout' => 'blank'
             ],
         ];
+    }
+
+    public function actionRobots()
+    {
+        Yii::$app->response->format = Response::FORMAT_RAW;
+        Yii::$app->response->headers->add('Content-Type', 'text/plain; charset=UTF-8');
+
+        return implode("\n", [
+            'Sitemap: ' . BlogHelper::url('site/sitemap', [], true),
+            'User-agent: *',
+            'Disallow: ',
+        ]);
     }
 
     public function actionSitemap()
