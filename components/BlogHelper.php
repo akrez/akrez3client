@@ -11,12 +11,12 @@ class BlogHelper extends Component
 
     public static $constant = false;
 
-    public static function url($action, $config = [])
+    public static function url($action, $config = [], $scheme = false)
     {
         if (Yii::$app->params['isParked']) {
-            return Url::to([$action] + $config);
+            return Url::to([$action] + $config, $scheme);
         } else {
-            return Url::to([$action] + $config);
+            return Url::to([$action] + $config, $scheme);
         }
     }
 

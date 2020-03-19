@@ -9,8 +9,8 @@ use yii\widgets\Spaceless;
 BlogAsset::register($this);
 $blogLogo = BlogHelper::getImage('logo', '32', Yii::$app->blog->attribute('logo'));
 ?>
-
 <?php $this->beginPage() ?>
+<?php Spaceless::begin(); ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 
@@ -24,7 +24,6 @@ $blogLogo = BlogHelper::getImage('logo', '32', Yii::$app->blog->attribute('logo'
         <?php $this->head() ?>
     </head>
 
-    <?php Spaceless::begin(); ?>
     <body class="pt20 pb20">
         <?php $this->beginBody() ?>
         <div class="container">
@@ -48,7 +47,7 @@ $blogLogo = BlogHelper::getImage('logo', '32', Yii::$app->blog->attribute('logo'
         </div>
         <?php $this->endBody() ?>
     </body>
-    <?php Spaceless::end(); ?>
 
 </html>
+<?php Spaceless::end(); ?>
 <?php $this->endPage() ?> 
