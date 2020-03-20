@@ -2,16 +2,9 @@
 
 use yii\helpers\Html;
 
-$this->title = $name;
-
-$blog = Yii::$app->blog->getIdentity();
-if ($blog) {
-    $this->context->layout = 'main';
-} else {
-    $this->context->layout = 'blank';
-}
+$this->title = $message;
 ?>
 <div class="jumbotron">
-    <h1><?= Html::encode($exception->statusCode) ?></h1>
-    <p><?= nl2br(Html::encode($message)) ?></p>
+    <div style="font-size: 63px;"><?= Html::encode($exception->statusCode) ?></div>
+    <h1 class="mt0" style="font-size: 21px;"><?= nl2br(Html::encode($message)) ?></h1>
 </div>

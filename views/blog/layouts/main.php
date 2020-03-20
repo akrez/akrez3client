@@ -11,7 +11,7 @@ $blogLogo = BlogHelper::getImage('logo', '32', Yii::$app->blog->attribute('logo'
 $titleParts = array_filter(array_unique(array_map("trim", [Yii::$app->blog->attribute('title'), Yii::$app->blog->attribute('slug'), $this->title])));
 ?>
 <?php $this->beginPage() ?>
-<?php Spaceless::begin(); ?>
+<?php if (YII_ENV != 'dev') Spaceless::begin(); ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 
@@ -30,19 +30,11 @@ $titleParts = array_filter(array_unique(array_map("trim", [Yii::$app->blog->attr
         <div class="container">
             <?= $this->render('navbar'); ?>
             <div class="row">
-                <?php if ($this->context->id == 'site' && in_array($this->context->action->id, ['signin', 'signup', 'reset-password-request', 'reset-password'])): ?>
-                    <div class="col-sm-12">
-                        <?= Alert::widget() ?>
-                        <?= $content ?>
-                    </div>
+                <?php if ($this->context->id == 'site' && in_array($this->context->action->id, ['signin', 'signup', 'reset-password-request', 'reset-password', 'error',])): ?>
+                    <div class="col-sm-12"><?= Alert::widget() ?><?= $content ?></div>
                 <?php else: ?>
-                    <div class="col-sm-3">
-                        <?= $this->render('mainmenu'); ?>
-                    </div>
-                    <div class="col-sm-9">
-                        <?= Alert::widget() ?>
-                        <?= $content ?>
-                    </div>
+                    <div class="col-sm-3"><?= $this->render('mainmenu'); ?></div>
+                    <div class="col-sm-9"><?= Alert::widget() ?><?= $content ?></div>
                 <?php endif; ?>
             </div>
         </div>
@@ -50,5 +42,5 @@ $titleParts = array_filter(array_unique(array_map("trim", [Yii::$app->blog->attr
     </body>
 
 </html>
-<?php Spaceless::end(); ?>
+<?php if (YII_ENV != 'dev') Spaceless::end(); ?>
 <?php $this->endPage() ?> 

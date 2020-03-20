@@ -2,9 +2,6 @@
 
 namespace app\components;
 
-//
-
-
 use Yii;
 use yii\base\Component;
 use yii\httpclient\Client;
@@ -23,23 +20,26 @@ use yii\web\UnsupportedMediaTypeHttpException;
 class Http extends Component
 {
 
-    private static function buildUrl($url, $params = [])
+    private static function postRequest($url, $postData = [], $params = [], $setBlogIdentity = true)
     {
         $user = Yii::$app->user->getIdentity();
         if ($user) {
             $params['_token'] = $user->token;
         }
         $params['_blog'] = Yii::$app->params['blogName'];
-        return Yii::$app->params['apiBaseUrl'] . $url . ($params ? '?' . http_build_query($params) : '');
+        $fullUrl = Yii::$app->params['apiBaseUrl'] . $url . ($params ? '?' . http_build_query($params) : '');
+        $data = (new Client(['transport' => 'yii\httpclient\CurlTransport']))->createRequest()->setMethod('POST')->setUrl($fullUrl)->setData($postData)->send()->getData();
+        if ($setBlogIdentity && $data['code'] == 200) {
+            Yii::$app->blog->setIdentity($data['_blog']);
+        }
+        return $data;
     }
 
     private static function post($url, $postData = [], $params = [])
     {
-        $fullUrl = self::buildUrl($url, $params);
-        $data = (new Client(['transport' => 'yii\httpclient\CurlTransport']))->createRequest()->setMethod('POST')->setUrl($fullUrl)->setData($postData)->send()->getData();
+        $data = self::postRequest($url, $postData, $params);
         switch ($data['code']) {
             case 200:
-                Yii::$app->blog->setIdentity($data['_blog']);
                 return $data;
             case 400:
                 throw new BadRequestHttpException;
@@ -94,10 +94,14 @@ class Http extends Component
         if (file_exists($path)) {
             return json_decode(file_get_contents($path), true);
         }
-        $fullUrl = self::buildUrl('constant');
-        $data = (new Client(['transport' => 'yii\httpclient\CurlTransport']))->createRequest()->setMethod('POST')->setUrl($fullUrl)->send()->getData();
+        $data = self::postRequest('constant', [], [], false);
         file_put_contents($path, json_encode($data));
         return $data;
+    }
+
+    public static function exist()
+    {
+        return self::postRequest('info');
     }
 
     public static function search($params)

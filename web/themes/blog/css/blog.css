@@ -24,6 +24,7 @@ h1, .h1 {
 
 .form-control {
     padding: 4px;
+    box-shadow: none;
 }
 
 .navbar .navbar-brand,

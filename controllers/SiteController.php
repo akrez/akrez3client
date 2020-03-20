@@ -39,10 +39,18 @@ class SiteController extends Controller
 
     public function actions()
     {
+        $layout = 'blank';
+        if (Yii::$app->params['blogName']) {
+            $data = Http::exist();
+            if ($data['code'] == 200) {
+                $this->view->params = $data;
+                $layout = 'main';
+            }
+        }
         return [
             'error' => [
                 'class' => 'yii\web\ErrorAction',
-                'layout' => 'blank'
+                'layout' => $layout,
             ],
         ];
     }
