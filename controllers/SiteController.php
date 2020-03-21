@@ -37,20 +37,26 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actions()
+    public function beforeAction($action)
     {
-        $layout = 'blank';
-        if (Yii::$app->params['blogName']) {
-            $data = Http::exist();
-            if ($data['code'] == 200) {
-                $this->view->params = $data;
-                $layout = 'main';
+        if ($action->id == 'error') {
+            $action->layout = 'blank';
+            if (Yii::$app->params['blogName']) {
+                $data = Http::exist();
+                if ($data['code'] == 200) {
+                    $this->view->params = $data;
+                    $action->layout = 'main';
+                }
             }
         }
+        return parent::beforeAction($action);
+    }
+
+    public function actions()
+    {
         return [
             'error' => [
                 'class' => 'yii\web\ErrorAction',
-                'layout' => $layout,
             ],
         ];
     }

@@ -28,7 +28,7 @@ class Http extends Component
         }
         $params['_blog'] = Yii::$app->params['blogName'];
         $fullUrl = Yii::$app->params['apiBaseUrl'] . $url . ($params ? '?' . http_build_query($params) : '');
-        $data = (new Client(['transport' => 'yii\httpclient\CurlTransport']))->createRequest()->setMethod('POST')->setUrl($fullUrl)->setData($postData)->send()->getData();
+        $data = (new Client(['transport' => 'yii\httpclient\CurlTransport']))->createRequest()->setHeaders(['X-Forwarded-For' => \Yii::$app->request->getUserIP()])->setOptions(['userAgent' => \Yii::$app->request->userAgent])->setMethod('POST')->setUrl($fullUrl)->setData($postData)->send()->getData();
         if ($setBlogIdentity && $data['code'] == 200) {
             Yii::$app->blog->setIdentity($data['_blog']);
         }
