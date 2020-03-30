@@ -66,39 +66,29 @@ Breadcrumbs::widget([
 
     <div class="col-sm-5 pb20">
         <div id="myCarousel" class="carousel slide" data-ride="carousel">
-
-            <!-- Indicators -->
-            <ol class="carousel-indicators" style="padding-right: 0; direction: ltr;">
-                <?php
-                $i = 0;
-                foreach (Yii::$app->view->params['images'] as $image):
-                    echo Html::tag('li', '', ['data-target' => "#myCarousel", 'data-slide-to' => $i, 'class' => ($i == 0 ? 'active' : '')]);
-                    $i++;
-                endforeach;
-                ?>
-            </ol>
-
-            <!-- Wrapper for slides -->
-            <div class="carousel-inner">
-                <?php
-                $i = 0;
-                foreach (Yii::$app->view->params['images'] as $imageKey => $image):
-                    echo '<div class="' . ($i == 0 ? 'item active' : 'item') . '"> <img src="' . BlogHelper::getImage('product', '400', $image['name']) . '" alt="' . HtmlPurifier::process(Yii::$app->view->params['product']['title']) . '"> </div>';
-                    $i++;
-                endforeach;
-                ?>
-            </div>
-
-            <!-- Left and right controls -->
-            <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-                <span class="glyphicon glyphicon-chevron-left"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="right carousel-control" href="#myCarousel" data-slide="next">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-                <span class="sr-only">Next</span>
-            </a>
-
+            <?php if (count(Yii::$app->view->params['images']) > 0): ?>
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner">
+                    <?php
+                    $i = 0;
+                    foreach (Yii::$app->view->params['images'] as $imageKey => $image):
+                        echo '<div class="' . ($i == 0 ? 'item active' : 'item') . '"> <img src="' . BlogHelper::getImage('product', '400', $image['name']) . '" alt="' . HtmlPurifier::process(Yii::$app->view->params['product']['title']) . '"> </div>';
+                        $i++;
+                    endforeach;
+                    ?>
+                </div>
+                <?php if (count(Yii::$app->view->params['images']) > 1): ?>
+                    <!-- Left and right controls -->
+                    <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                <?php endif; ?>
+            <?php endif; ?>
         </div>
     </div>
 

@@ -11,14 +11,14 @@ $this->registerJs('
         $(this).closest(".filter").find("input[type=text]").val("");
     });
 ', View::POS_END);
-$blogLogo = BlogHelper::getImage('logo', '400__67', Yii::$app->blog->attribute('logo'));
 $constant = BlogHelper::getConstant();
 ?>
 
-<?php if ($this->context->id == 'site' && in_array($this->context->action->id, ['index'])): ?>
+<?php if ($this->context->id == 'site' && in_array($this->context->action->id, ['index']) && Yii::$app->blog->attribute('logo')): ?>
     <div class="row pb20">
         <div class="col-sm-12">
             <?php
+            $blogLogo = BlogHelper::getImage('logo', '400__67', Yii::$app->blog->attribute('logo'));
             $logo = Html::img($blogLogo, ['style' => 'margin: auto;', 'class' => 'img-responsive img-rounded', 'alt' => HtmlPurifier::process(Yii::$app->blog->attribute('title'))]);
             echo Html::a($logo, BlogHelper::blogFirstPageUrl(), ['style' => 'text-align: center;']);
             ?>
