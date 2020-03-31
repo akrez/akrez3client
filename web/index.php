@@ -32,25 +32,15 @@ require VENDOR_PATH . '/yiisoft/yii2/Yii.php';
 
 $params = require(__DIR__ . '/../config/params.php');
 
-if ($params['params']['isParked']) {
-    $rules = [
-        '/robots.txt' => 'site/robots',
-        '/sitemap.xml' => 'site/sitemap',
-        '/gallery/<type:\w+>/<whq>/<name:[\w\.]+>' => 'site/gallery',
-        '/<action:[\w\-]+>/<id>' => 'site/<action>',
-        '/<action:[\w\-]+>' => 'site/<action>',
-        '/' => 'site/index',
-    ];
-} else {
-    $rules = [
-        '/robots.txt' => 'site/robots',
-        '/sitemap.xml' => 'site/sitemap',
-        '/gallery/<type:\w+>/<whq>/<name:[\w\.]+>' => 'site/gallery',
-        '/<action:[\w\-]+>/<id>' => 'site/<action>',
-        '/<action:[\w\-]+>' => 'site/<action>',
-        '/' => 'site/index',
-    ];
-}
+$rules = [
+    '/robots.txt' => 'site/robots',
+    '/sitemap.xml' => 'site/sitemap',
+    '/manifest.json' => 'site/manifest',
+    '/gallery/<type:\w+>/<whq>/<name:[\w\.]+>' => 'site/gallery',
+    '/<action:[\w\-]+>/<id>' => 'site/<action>',
+    '/<action:[\w\-]+>' => 'site/<action>',
+    '/' => 'site/index',
+];
 
 $config = [
     'id' => 'basic',
@@ -153,7 +143,10 @@ $config = [
             ],
         ],
     ],
-    'params' => $params['params'],
+    'params' => $params['params'] + [
+        'manifestIconSizes' => [16, 32, 60, 72, 76, 96, 114, 120, 144, 152, 180, 192],
+        'manifestThemeColor' => "#3c8dbc",
+    ],
 ];
 
 if (YII_ENV == 'dev') {

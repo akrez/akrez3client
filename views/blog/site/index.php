@@ -8,7 +8,7 @@ use yii\helpers\HtmlPurifier;
 <div class="v1-default-index">
     <h1 class="mt0" style="display: inline-block;"><?= HtmlPurifier::process(Yii::$app->blog->attribute('title')) ?></h1>
     <h2 class="mt0 h2text" style="display: inline-block;margin-right: 10px;"><?= Yii::$app->blog->attribute('slug') ?></h2>
-    <h5 class="mt0" style="text-align: justify;line-height: 1.62em;font-size: 14px;"><?= Yii::$app->blog->attribute('des') ?></h5>
+    <h3 class="mt0" style="text-align: justify;line-height: 1.62em;font-size: 14px;"><?= Yii::$app->blog->attribute('des') ?></h3>
 </div>
 
 <div class="row pt20 pb20">

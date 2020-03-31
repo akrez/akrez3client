@@ -22,6 +22,22 @@ $titleParts = array_filter(array_unique(array_map("trim", [Yii::$app->blog->attr
         <?= Yii::$app->view->registerLinkTag(['rel' => 'icon', 'href' => $blogLogo]) ?>
         <?= Html::csrfMetaTags() ?>
         <title><?= Html::encode(implode(' | ', $titleParts)) ?></title>
+
+        <?php foreach (["apple-touch-icon", "icon",] as $relsValue) : ?>
+            <?php foreach (Yii::$app->params['manifestIconSizes'] as $widthsValue) : ?>
+                <link sizes="<?= $widthsValue . 'x' . $widthsValue ?>" href="<?= BlogHelper::getImage('logo', $widthsValue, Yii::$app->blog->attribute('logo')) ?>" rel="<?= $relsValue ?>">
+            <?php endforeach; ?>
+        <?php endforeach; ?>
+
+        <meta name="msapplication-TileImage" content="<?= BlogHelper::getImage('logo', 144, Yii::$app->blog->attribute('logo')) ?>">
+        <meta name="msapplication-TileColor" content="#ffffff">
+
+        <meta name="theme-color" content="<?= Yii::$app->params['manifestThemeColor'] ?>">
+        <meta name="msapplication-navbutton-color" content="<?= Yii::$app->params['manifestThemeColor'] ?>">
+        <meta name="apple-mobile-web-app-status-bar-style" content="<?= Yii::$app->params['manifestThemeColor'] ?>">
+
+        <link rel="manifest" href="<?= BlogHelper::url('/manifest.json') ?>">
+
         <?php $this->head() ?>
     </head>
 

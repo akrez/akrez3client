@@ -25,7 +25,7 @@ class SiteController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['error', 'index', 'category', 'product', 'sitemap', 'robots',],
+                        'actions' => ['error', 'index', 'category', 'product', 'sitemap', 'robots', 'manifest'],
                         'allow' => true,
                     ],
                     [
@@ -71,6 +71,35 @@ class SiteController extends Controller
             'User-agent: *',
             'Disallow: ',
         ]);
+    }
+
+    public function actionManifest()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        //
+        Http::info();
+        //
+        $icons = [];
+        $logo = Yii::$app->blog->attribute('logo');
+        foreach (Yii::$app->params['manifestIconSizes'] as $widthsValue) {
+            $icons[] = [
+                "src" => BlogHelper::getImage('logo', $widthsValue, $logo),
+                "sizes" => $widthsValue . 'x' . $widthsValue,
+            ];
+        }
+        //
+        return [
+            "name" => Yii::$app->blog->attribute('title'),
+            "short_name" => ucfirst(Yii::$app->blog->attribute('name')),
+            "display" => "standalone",
+            "lang" => "fa",
+            "dir" => "rtl",
+            "start_url" => "/",
+            "background_color" => "#FFFFFF",
+            "theme_color" => Yii::$app->params['manifestThemeColor'],
+            "orientation" => "portrait",
+            "icons" => $icons,
+        ];
     }
 
     public function actionSitemap()
