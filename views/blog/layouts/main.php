@@ -1,14 +1,22 @@
 <?php
 
 use app\assets\BlogAsset;
-use app\components\BlogHelper;
 use app\components\Alert;
+use app\components\BlogHelper;
 use yii\helpers\Html;
 use yii\widgets\Spaceless;
 
 BlogAsset::register($this);
-$blogLogo = BlogHelper::getImage('logo', '32', Yii::$app->blog->attribute('logo'));
-$titleParts = array_filter(array_unique(array_map("trim", [Yii::$app->blog->attribute('title'), Yii::$app->blog->attribute('slug'), $this->title])));
+$blogSlug = (Yii::$app->blog->attribute('slug') ? Yii::$app->blog->attribute('slug') : '');
+$this->title = ($this->title ? $this->title . ' | ' : '') . Yii::$app->blog->attribute('title') . ($blogSlug ? ' | ' . $blogSlug : '');
+$this->registerMetaTag([
+    'name' => 'description',
+    'content' => (Yii::$app->blog->attribute('des') ? Yii::$app->blog->attribute('des') : Yii::$app->blog->attribute('title') . ($blogSlug ? ' - ' . $blogSlug : '')) . ' - ' . Yii::$app->blog->attribute('name'),
+]);
+$this->registerMetaTag([
+    'name' => 'keywords',
+    'content' => Yii::$app->blog->attribute('title') . ($blogSlug ? ',' . $blogSlug : '') . ',' . Yii::$app->blog->attribute('name') . (isset(Yii::$app->view->params['_categories']) && Yii::$app->view->params['_categories'] ? ',' . implode(',', Yii::$app->view->params['_categories']) : ''),
+]);
 ?>
 <?php $this->beginPage() ?>
 <?php if (YII_ENV != 'dev') Spaceless::begin(); ?>
@@ -19,9 +27,14 @@ $titleParts = array_filter(array_unique(array_map("trim", [Yii::$app->blog->attr
         <meta charset="<?= Yii::$app->charset ?>">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <?= Yii::$app->view->registerLinkTag(['rel' => 'icon', 'href' => $blogLogo]) ?>
+        <?=
+        Yii::$app->view->registerLinkTag([
+            'rel' => 'icon',
+            'href' => BlogHelper::getImage('logo', '32', Yii::$app->blog->attribute('logo')),
+        ])
+        ?>
         <?= Html::csrfMetaTags() ?>
-        <title><?= Html::encode(implode(' | ', $titleParts)) ?></title>
+        <title><?= Html::encode($this->title) ?></title>
 
         <?php foreach (["apple-touch-icon", "icon",] as $relsValue) : ?>
             <?php foreach (Yii::$app->params['manifestIconSizes'] as $widthsValue) : ?>

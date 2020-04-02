@@ -38,7 +38,7 @@ class Helper extends Component
         return $randomString;
     }
 
-    public static function normalizeArray($arr, $arrayOut = false)
+    public static function normalizeArray($arr, $returnAsArray = false, $glue = ",")
     {
         if (is_array($arr)) {
             $arr = implode(",", $arr);
@@ -51,10 +51,10 @@ class Helper extends Component
         $arr = array_unique($arr);
         $arr = array_filter($arr);
         sort($arr);
-        if ($arrayOut) {
+        if ($returnAsArray) {
             return $arr;
         }
-        return implode(",", $arr);
+        return implode($glue, $arr);
     }
 
     public static function normalizeEmail($email)
