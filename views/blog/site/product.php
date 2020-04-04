@@ -103,7 +103,7 @@ Breadcrumbs::widget([
                             <div>
                                 <?php if ($package['color']) : ?>
                                     <span style="float: right;">
-                                        <span class="label label-default" style="background-color: #<?= $package['color'] ?>">⠀⠀</span> <?= HtmlPurifier::process(BlogHelper::getConstant('color', $package['color'])) ?>
+                                        <span class="label label-default" style="background-color: #<?= $package['color'] ?>">⠀⠀</span> <?= BlogHelper::getConstant('color', $package['color']) ?>
                                     </span>
                                 <?php endif; ?>
                                 <span style="float: left;">
