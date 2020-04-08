@@ -1,6 +1,7 @@
 <?php
 
 use app\components\BlogHelper;
+use app\components\Helper;
 use app\models\FieldList;
 use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
@@ -38,96 +39,160 @@ $constant = BlogHelper::getConstant();
     echo Html::beginForm(BlogHelper::url('site/category', ['id' => Yii::$app->view->params['categoryId']]), 'GET');
     ?>
 
+
+
     <div class="row">
 
         <?php
+        $this->registerJs('
+            $(document).on("click", ".panel .clickable", function (e) {
+                var $this = $(this);
+                if (!$this.hasClass("panel-collapsed")) {
+                    $this.parents(".panel").find(".panel-body").slideUp();
+                    $this.addClass("panel-collapsed");
+                } else {
+                    $this.parents(".panel").find(".panel-body").slideDown();
+                    $this.removeClass("panel-collapsed");
+                }
+            });
+        ', View::POS_READY);
         $i = 0;
-        foreach (Yii::$app->view->params['search'] as $fieldId => $filters) :
-
+        foreach (Yii::$app->view->params['search'] as $fieldId => $fieldFilters) :
             $field = Yii::$app->view->params['fields'][$fieldId];
             $type = $field['type'];
-            $typeFilter = $field['filter'];
-            $typeOperations = (isset($constant['opertaion'][$typeFilter]) ? $constant['opertaion'][$typeFilter] : []);
-
-            if (in_array($typeFilter, [FieldList::TYPE_STRING, FieldList::TYPE_NUMBER])):
-                $filters[] = ['operation' => null, 'value' => null];
-            elseif (count($filters) == 0):
-                $filters[] = ['operation' => null, 'value' => null];
-            endif;
-
-            foreach ($filters as $filter) :
+            $widgets = (array) $field['widgets'];
+            foreach ($widgets as $widget) :
+                $filter = ['operation' => null, 'value' => null];
+                foreach ((array) $fieldFilters as $fieldFilterKey => $fieldFilter) :
+                    if ($fieldFilter['widget'] == $widget) {
+                        $filter = Yii::$app->view->params['search'][$fieldId][$fieldFilterKey];
+                        unset(Yii::$app->view->params['search'][$fieldId][$fieldFilterKey]);
+                        continue;
+                    }
+                endforeach;
                 $namePrefix = 'Search[' . $fieldId . '][' . $i . ']';
-                ?>
-
-                <?php if (in_array($typeFilter, [FieldList::FILTER_STRING, FieldList::FILTER_NUMBER])) : $filter['value'] = (is_array($filter['value']) ? implode(' ', $filter['value']) : $filter['value']) ?>
-                    <div class="col-sm-12 pb20 filter">
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <?= Html::tag('label', $field['title'], ['class' => 'control-label', 'style' => 'margin-top: 3px;margin-bottom: 2px;']) ?>
-                            </span>
-                            <?= Html::dropDownList($namePrefix . '[operation]', $filter['operation'], $typeOperations, ['class' => 'form-control', 'style' => 'width: 40%; padding: 4px;']); ?>
-                            <?= Html::textInput($namePrefix . '[value]', $filter['value'], ['class' => 'form-control', 'style' => 'width: 60%; padding: 4px;']); ?>
-                            <?= (empty($field['unit']) ? '' : Html::tag('span', $field['unit'], ['class' => 'input-group-addon'])); ?>
-                            <?php if ($filter['value'] !== null) : ?>
-                                <span class="input-group-btn">
-                                    <button class="btn btn-danger btn-delete" type="button" style="height: 34px;padding-top: 9px;">
-                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                    </button>
+                echo Html::hiddenInput($namePrefix . '[widget]', $widget);
+                if ($type == FieldList::TYPE_STRING || $type == FieldList::TYPE_NUMBER):
+                    if ($type == FieldList::TYPE_NUMBER) {
+                        $specialWidgets = ['>=' => BlogHelper::getConstant('widget', $type, '>='), '<=' => BlogHelper::getConstant('widget', $type, '<='), '=' => BlogHelper::getConstant('widget', $type, '='), '<>' => BlogHelper::getConstant('widget', $type, '<>')];
+                    } else {
+                        $specialWidgets = ['LIKE' => BlogHelper::getConstant('widget', $type, 'LIKE'), 'NOT LIKE' => BlogHelper::getConstant('widget', $type, 'NOT LIKE'), '=' => BlogHelper::getConstant('widget', $type, '='), '<>' => BlogHelper::getConstant('widget', $type, '<>')];
+                    }
+                    if (in_array($widget, array_keys($specialWidgets))):
+                        ?>
+                        <div class="col-sm-12 pb20 filter">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <?= Html::tag('label', $field['title'] . ' ' . BlogHelper::getConstant('widget', $type, $widget), ['class' => 'control-label', 'style' => 'margin-top: 3px;margin-bottom: 2px;']) ?>
                                 </span>
-                            <?php endif ?>
+                                <?= Html::hiddenInput($namePrefix . '[operation]', $widget); ?>
+                                <?= Html::textInput($namePrefix . '[value]', $filter['value'], ['class' => 'form-control',]); ?>
+                                <?= (empty($field['unit']) ? '' : Html::tag('span', $field['unit'], ['class' => 'input-group-addon'])); ?>
+                                <?php if ($filter['value'] !== null) : ?>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-danger btn-delete" type="button" style="height: 34px;padding-top: 9px;">
+                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                        </button>
+                                    </span>
+                                <?php endif ?>
+                            </div>
                         </div>
-                    </div>
-                <?php elseif ($typeFilter == FieldList::FILTER_2STATE) : ?>
-
-                    <div class="col-sm-12 pb20">
-                        <?= Html::hiddenInput($namePrefix . '[operation]', '='); ?>
-                        <?= Html::checkbox($namePrefix . '[value]', strval($filter['value']), [], ['separator' => ' ']); ?>
-                        <?= Html::tag('label', $field['title'], ['class' => 'control-label', 'style' => 'margin-top: 3px;margin-bottom: 2px;']) ?>
-                    </div>
-
-                <?php elseif ($typeFilter == FieldList::FILTER_3STATE) : ?>
-
-                    <?php
-                    $values = [
-                        0 => (empty($field['label_no']) ? Yii::$app->formatter->booleanFormat[0] : $field['label_no']),
-                        1 => (empty($field['label_yes']) ? Yii::$app->formatter->booleanFormat[1] : $field['label_yes']),
-                    ];
-                    ?>
-
-                    <div class="col-sm-12 pb20">
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <?= Html::tag('label', $field['title'], ['class' => 'control-label', 'style' => 'margin-top: 3px;margin-bottom: 2px;']) ?>
-                            </span>
-                            <?= Html::hiddenInput($namePrefix . '[operation]', '='); ?>
-                            <?= Html::dropDownList($namePrefix . '[value]', $filter['value'], $values, ['class' => 'form-control', 'style' => 'width: 100%; padding: 4px;', 'prompt' => '']); ?>
-                            <?= (empty($field['unit']) ? '' : Html::tag('span', $field['unit'], ['class' => 'input-group-addon'])) ?>
-                            <?php if ($filter['value'] !== null && false) : ?> 
-                                <span class="input-group-btn">
-                                    <button class="btn btn-danger" type="button" style="height: 34px;padding-top: 9px;">
-                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                    </button>
+                        <?php
+                    elseif ($widget == 'COMBO') :
+                        ?>
+                        <div class="col-sm-12 pb20 filter">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <?= Html::tag('label', $field['title'], ['class' => 'control-label', 'style' => 'margin-top: 3px;margin-bottom: 2px;']) ?>
                                 </span>
-                            <?php endif ?> 
+                                <?= Html::dropDownList($namePrefix . '[operation]', $filter['operation'], $specialWidgets, ['class' => 'form-control', 'style' => 'width: 40%; padding: 4px;']); ?>
+                                <?= Html::textInput($namePrefix . '[value]', $filter['value'], ['class' => 'form-control', 'style' => 'width: 60%; padding: 4px;']); ?>
+                                <?php if ($filter['value'] !== null) : ?>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-danger btn-delete" type="button" style="height: 34px;padding-top: 9px;">
+                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                        </button>
+                                    </span>
+                                <?php endif ?>
+                            </div>
                         </div>
-                    </div>
+                        <?php
+                    elseif ($widget == 'SINGLE') :
+                        $items = Helper::normalizeArray($field['options'], true);
+                        ?>
+                        <div class="col-sm-12 filter">
+                            <div class="panel panel-default">
+                                <div class="panel-heading clickable" style="padding-top: 5px;padding-bottom: 0px;padding-right: 12px;padding-left: 12px;background: #eeeeee; cursor: pointer;">
+                                    <?= Html::tag('label', $field['title'], ['class' => 'control-label', 'style' => 'color: #555555;']) ?>
+                                </div>
+                                <div class="panel-body" style="padding-right: 12px;padding-left: 12px;padding-top: 6px;padding-bottom: 6px;">
+                                    <?= Html::hiddenInput($namePrefix . '[operation]', '='); ?>
+                                    <?= Html::radioList($namePrefix . '[value]', $filter['value'], array_combine($items, $items), ['separator' => "<br />", 'encode' => false]) ?>
+                                    <a onclick="$(this).closest('.filter').find('input[type=radio]').prop('checked', false)" href="javascript:void(0);" style="padding-right: 15px;"><small class="control-label">(هیچکدام)</small></a>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    elseif ($widget == 'MULTI') :
+                        $items = Helper::normalizeArray($field['options'], true);
+                        ?>
+                        <div class="col-sm-12 filter">
+                            <div class="panel panel-default">
+                                <div class="panel-heading clickable" style="padding-top: 5px;padding-bottom: 0px;padding-right: 12px;padding-left: 12px;background: #eeeeee; cursor: pointer;">
+                                    <?= Html::tag('label', $field['title'], ['class' => 'control-label', 'style' => 'color: #555555;']) ?>
+                                </div>
+                                <div class="panel-body" style="padding-right: 12px;padding-left: 12px;padding-top: 6px;padding-bottom: 6px;">
+                                    <?= Html::hiddenInput($namePrefix . '[operation]', 'IN'); ?>
+                                    <?= Html::checkboxList($namePrefix . '[value][]', $filter['value'], array_combine($items, $items), ['separator' => "<br />", 'encode' => false]) ?>
+                                    <a onclick="$(this).closest('.filter').find('input[type=checkbox]').prop('checked', false)" href="javascript:void(0);" style="padding-right: 15px;"><small class="control-label">(هیچکدام)</small></a>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    endif;
+                elseif ($type == FieldList::TYPE_BOOLEAN) :
+                    if ($widget == '2STATE') :
+                        $idPrefix = 'Search-' . $fieldId . '-' . $i;
+                        ?>
+                        <div class="col-sm-12 pb20">
+                            <div class="input-group"> 
+                                <span class="input-group-addon">
+                                    <?= Html::checkbox($namePrefix . '[value]', $filter['value'], ['id' => $idPrefix]); ?> 
+                                </span>
+                                <?= Html::hiddenInput($namePrefix . '[operation]', '='); ?>
+                                <span class="form-control" style="background-color: #eeeeee;padding-right: 12px;padding-left: 12px;">
+                                    <?= Html::tag('label', $field['title'], ['for' => $idPrefix, 'class' => 'control-label', 'style' => 'margin-top: 3px;margin-bottom: 2px;width: 100%; user-select: none; ']) ?>
+                                </span>
+                            </div>
+                        </div>
+                    <?php elseif ($widget == '3STATE') : ?>
+                        <?php
+                        $items = [
+                            0 => (empty($field['label_no']) ? Yii::$app->formatter->booleanFormat[0] : $field['label_no']),
+                            1 => (empty($field['label_yes']) ? Yii::$app->formatter->booleanFormat[1] : $field['label_yes']),
+                        ];
+                        ?>
+                        <div class="col-sm-12 pb20">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <?= Html::tag('label', $field['title'], ['class' => 'control-label', 'style' => 'margin-top: 3px;margin-bottom: 2px;']) ?>
+                                </span>
+                                <?= Html::hiddenInput($namePrefix . '[operation]', '='); ?>
+                                <?= Html::dropDownList($namePrefix . '[value]', $filter['value'], $items, ['class' => 'form-control', 'style' => 'width: 100%; padding: 4px;', 'prompt' => '']); ?>
+                                <?= (empty($field['unit']) ? '' : Html::tag('span', $field['unit'], ['class' => 'input-group-addon'])) ?>
+                                <?php if ($filter['value'] !== null && false) : ?> 
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-danger" type="button" style="height: 34px;padding-top: 9px;">
+                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                        </button>
+                                    </span>
+                                <?php endif ?> 
+                            </div>
+                        </div>
+                        <?php
+                    endif;
+                endif;
 
-                <?php elseif ($typeFilter == FieldList::FILTER_MULTI) : $values = explode(',', $field['options']); ?>
-                    <div class="col-sm-12 pb20">
-                        <?= Html::tag('label', $field['title'], ['class' => 'control-label', 'style' => 'margin-top: 3px;margin-bottom: 2px;']) ?>
-                        <?= Html::hiddenInput($namePrefix . '[operation]', 'IN'); ?>
-                        <?= Html::checkboxList($namePrefix . '[value]', $filter['value'], array_combine($values, $values), ['separator' => ' ']); ?>
-                    </div>
-                <?php elseif ($typeFilter == FieldList::FILTER_SINGLE) : $values = explode(',', $field['options']); ?>
-                    <div class="col-sm-12 pb20 radiolistbox">
-                        <?= Html::tag('label', $field['title'], ['class' => 'control-label']) ?>
-                        <a onclick="$(this).closest('.radiolistbox').find('input[type=radio]').prop('checked', false)" href="javascript:void(0);"><small class="control-label">(هیچکدام)</small></a>
-                        <?= Html::hiddenInput($namePrefix . '[operation]', 'IN'); ?>
-                        <?= Html::radioList($namePrefix . '[value]', $filter['value'], array_combine($values, $values), ['itemOptions' => ['labelOptions' => ['style' => 'margin: 0 0 0 10px;']]]); ?>
-                    </div>
-                <?php endif; ?>
-
-                <?php
                 $i++;
             endforeach;
         endforeach;
@@ -135,10 +200,13 @@ $constant = BlogHelper::getConstant();
 
     </div>
 
-    <?php
-    echo '<div class="row pb20"><div class="col-sm-6">' . Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-default btn-block']) . '</div></div>';
-    echo Html::endForm();
-    ?>
+    <div class="row pb20">
+        <div class="col-sm-6">
+            <button type="submit" class="btn btn-default btn-block"><?= Yii::t('app', 'Search') ?></button>
+        </div>
+    </div>
+
+    <?= Html::endForm(); ?>
 
 <?php endif; ?>
 
