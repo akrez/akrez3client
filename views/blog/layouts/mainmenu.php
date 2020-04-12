@@ -5,13 +5,35 @@ use app\components\Helper;
 use app\models\FieldList;
 use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
+use yii\jui\SliderInput;
+use yii\web\JsExpression;
 use yii\web\View;
 
 $this->registerJs('
     $("body").on("click", ".btn-delete", function(){
         $(this).closest(".filter").find("input[type=text]").val("");
     });
+    
+    function sliderCheckboxOnChange(event) {
+        var checkbox = $(event.target);
+        var idPrefix = checkbox.attr("data-idprefix");
+        if(checkbox.is(":checked")){
+            $(checkbox).parents(".panel").find(".panel-body").slideDown();
+            $(checkbox).removeClass("panel-collapsed");
+            $("#"+idPrefix+"-input-min").prop("disabled", false);
+            $("#"+idPrefix+"-input-max").prop("disabled", false);
+        } else {
+            $(checkbox).parents(".panel").find(".panel-body").slideUp();
+            $(checkbox).addClass("panel-collapsed");
+            $("#"+idPrefix+"-input-min").prop("disabled", true);
+            $("#"+idPrefix+"-input-max").prop("disabled", true);
+        }
+    }
+ 
 ', View::POS_END);
+$this->registerCss('
+	width: calc(100% - 20px) !important;
+');
 $constant = BlogHelper::getConstant();
 ?>
 
@@ -35,9 +57,7 @@ $constant = BlogHelper::getConstant();
         </div>
     </div>
 
-    <?php
-    echo Html::beginForm(BlogHelper::url('site/category', ['id' => Yii::$app->view->params['categoryId']]), 'GET');
-    ?>
+    <?= Html::beginForm(BlogHelper::url('site/category', ['id' => Yii::$app->view->params['categoryId']]), 'GET'); ?>
 
 
 
@@ -46,13 +66,13 @@ $constant = BlogHelper::getConstant();
         <?php
         $this->registerJs('
             $(document).on("click", ".panel .clickable", function (e) {
-                var $this = $(this);
-                if (!$this.hasClass("panel-collapsed")) {
-                    $this.parents(".panel").find(".panel-body").slideUp();
-                    $this.addClass("panel-collapsed");
+                var that = $(this);
+                if (that.hasClass("panel-collapsed")) {
+                    that.parents(".panel").find(".panel-body").slideDown();
+                    that.removeClass("panel-collapsed");
                 } else {
-                    $this.parents(".panel").find(".panel-body").slideDown();
-                    $this.removeClass("panel-collapsed");
+                    that.parents(".panel").find(".panel-body").slideUp();
+                    that.addClass("panel-collapsed");
                 }
             });
         ', View::POS_READY);
@@ -120,10 +140,10 @@ $constant = BlogHelper::getConstant();
                     elseif ($widget == 'SINGLE') :
                         $items = Helper::normalizeArray($field['options'], true);
                         ?>
-                        <div class="col-sm-12 filter">
+                        <div class="col-sm-12 pb20 filter">
                             <div class="panel panel-default">
                                 <div class="panel-heading clickable" style="padding-top: 5px;padding-bottom: 0px;padding-right: 12px;padding-left: 12px;background: #eeeeee; cursor: pointer;">
-                                    <?= Html::tag('label', $field['title'], ['class' => 'control-label', 'style' => 'color: #555555;']) ?>
+                                    <?= Html::tag('label', $field['title'] . '<small>' . $field['unit'] . '</small>', ['class' => 'control-label', 'style' => 'color: #555555;']) ?>
                                 </div>
                                 <div class="panel-body" style="padding-right: 12px;padding-left: 12px;padding-top: 6px;padding-bottom: 6px;">
                                     <?= Html::hiddenInput($namePrefix . '[operation]', '='); ?>
@@ -139,7 +159,7 @@ $constant = BlogHelper::getConstant();
                         <div class="col-sm-12 filter">
                             <div class="panel panel-default">
                                 <div class="panel-heading clickable" style="padding-top: 5px;padding-bottom: 0px;padding-right: 12px;padding-left: 12px;background: #eeeeee; cursor: pointer;">
-                                    <?= Html::tag('label', $field['title'], ['class' => 'control-label', 'style' => 'color: #555555;']) ?>
+                                    <?= Html::tag('label', $field['title'] , ['class' => 'control-label', 'style' => 'color: #555555;']) . Html::tag('small', $field['unit']) ?>
                                 </div>
                                 <div class="panel-body" style="padding-right: 12px;padding-left: 12px;padding-top: 6px;padding-bottom: 6px;">
                                     <?= Html::hiddenInput($namePrefix . '[operation]', 'IN'); ?>
@@ -149,12 +169,78 @@ $constant = BlogHelper::getConstant();
                             </div>
                         </div>
                         <?php
+                    elseif ($widget == 'BETWEEN'):
+                        $idPrefix = 'Search-' . $fieldId . '-' . $i;
+                        //
+                        $min = 0;
+                        $max = 100;
+                        if ($fieldId == 'price') {
+                            if (Yii::$app->view->params['category']['price_min']) {
+                                $min = floatval(Yii::$app->view->params['category']['price_min']);
+                            }
+                            if (Yii::$app->view->params['category']['price_max']) {
+                                $max = floatval(Yii::$app->view->params['category']['price_max']);
+                            }
+                        } elseif (isset($field['options'])) {
+                            $items = Helper::normalizeArray($field['options'], true);
+                            if (count($items) > 0) {
+                                $min = reset($items);
+                                $max = end($items);
+                            }
+                        }
+                        $min = floatval($min);
+                        $max = floatval($max == $min ? $max + 1 : $max);
+                        //
+                        if (!is_array($filter['value'])) {
+                            $filter['value'] = Helper::normalizeArray($filter['value'], true);
+                        }
+                        $disabled = true;
+                        if (count($filter['value']) == 2) {
+                            $disabled = false;
+                        } else {
+                            $filter['value'] = [
+                                0 => $min,
+                                1 => $max,
+                            ];
+                        }
+                        //
+                        echo Html::hiddenInput($namePrefix . '[operation]', $widget);
+                        ?>
+                        <div class="col-sm-12 filter">
+                            <div class="panel panel-default">
+                                <div class="panel-heading <?= $disabled ? 'panel-collapsed' : '' ?>" style="padding-top: 4px;padding-bottom: 0px;padding-right: 12px;padding-left: 12px;background: #eeeeee;">
+                                    <?= Html::checkbox($namePrefix . '[value]', !$disabled, ['id' => $idPrefix . '-checkbox', 'style' => 'padding-top: 6px;padding-bottom: 6px;margin-left: 12px;border-left: black solid 1px;', 'data-idPrefix' => $idPrefix, 'onchange' => 'sliderCheckboxOnChange(event);',]); ?> 
+                                    <?= Html::tag('label', $field['title'], ['for' => $idPrefix . '-checkbox', 'class' => 'control-label', 'style' => 'margin-top: 0px;margin-bottom: 4px; user-select: none; margin-right: 12px;color: #555;width: calc(100% - 40px);']) ?>
+                                </div>
+                                <div class="panel-body" style="<?= $disabled ? 'display: none;' : '' ?>padding-right: 12px;padding-left: 12px;padding-top: 6px;padding-bottom: 6px;">
+                                    <?php
+                                    echo "<div><span style='float: left;' id='$idPrefix-label-min'>" . number_format($filter['value'][0]) . "</span><span style='float: right;' id='$idPrefix-label-max'>" . number_format($filter['value'][1]) . "</span><div class='clearfix'></div></div>";
+                                    echo SliderInput::widget([
+                                        'options' => [
+                                            'id' => $idPrefix . '-slider',
+                                        ],
+                                        'clientOptions' => [
+                                            //'disabled' => $disabled,
+                                            'min' => $min,
+                                            'max' => $max,
+                                            'range' => true,
+                                            'values' => $filter['value'],
+                                            'slide' => new JsExpression("function( event, ui ) { $('#{$idPrefix}-label-min').text(ui.values[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')); $('#{$idPrefix}-label-max').text(ui.values[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));   $('#{$idPrefix}-input-min').val(ui.values[0]); $('#{$idPrefix}-input-max').val(ui.values[1]); }"),
+                                        ],
+                                    ]);
+                                    echo Html::hiddenInput($namePrefix . '[value][0]', $filter['value'][0], ['id' => $idPrefix . '-input-min'] + ($disabled ? ['disabled' => 'disabled'] : []));
+                                    echo Html::hiddenInput($namePrefix . '[value][1]', $filter['value'][1], ['id' => $idPrefix . '-input-max'] + ($disabled ? ['disabled' => 'disabled'] : []));
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
                     endif;
                 elseif ($type == FieldList::TYPE_BOOLEAN) :
                     if ($widget == '2STATE') :
                         $idPrefix = 'Search-' . $fieldId . '-' . $i;
                         ?>
-                        <div class="col-sm-12 pb20">
+                        <div class="col-sm-12 pb20 filter">
                             <div class="input-group"> 
                                 <span class="input-group-addon">
                                     <?= Html::checkbox($namePrefix . '[value]', $filter['value'], ['id' => $idPrefix]); ?> 
@@ -172,7 +258,7 @@ $constant = BlogHelper::getConstant();
                             1 => (empty($field['label_yes']) ? Yii::$app->formatter->booleanFormat[1] : $field['label_yes']),
                         ];
                         ?>
-                        <div class="col-sm-12 pb20">
+                        <div class="col-sm-12 pb20 filter">
                             <div class="input-group">
                                 <span class="input-group-addon">
                                     <?= Html::tag('label', $field['title'], ['class' => 'control-label', 'style' => 'margin-top: 3px;margin-bottom: 2px;']) ?>
@@ -223,4 +309,5 @@ $constant = BlogHelper::getConstant();
             </div>
         </div>
     </div>
-<?php endif ?>
+    <?php
+ endif ?>
