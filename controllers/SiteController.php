@@ -83,7 +83,7 @@ class SiteController extends Controller
         $logo = Yii::$app->blog->attribute('logo');
         foreach (Yii::$app->params['manifestIconSizes'] as $widthsValue) {
             $icons[] = [
-                "src" => BlogHelper::getImage('logo', $widthsValue, $logo),
+                "src" => BlogHelper::getImage('logo', $widthsValue . "_" . $widthsValue . "_100_1", $logo),
                 "sizes" => $widthsValue . 'x' . $widthsValue,
             ];
         }
