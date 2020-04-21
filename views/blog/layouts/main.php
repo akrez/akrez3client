@@ -30,7 +30,7 @@ $this->registerMetaTag([
         <?=
         Yii::$app->view->registerLinkTag([
             'rel' => 'icon',
-            'href' => BlogHelper::getImage('logo', '32', Yii::$app->blog->attribute('logo')),
+            'href' => BlogHelper::getImage('logo', '32_32__1', Yii::$app->blog->attribute('logo')),
         ])
         ?>
         <?= Html::csrfMetaTags() ?>
@@ -38,11 +38,11 @@ $this->registerMetaTag([
 
         <?php foreach (["apple-touch-icon", "icon",] as $relsValue) : ?>
             <?php foreach (Yii::$app->params['manifestIconSizes'] as $widthsValue) : ?>
-                <link sizes="<?= $widthsValue . 'x' . $widthsValue ?>" href="<?= BlogHelper::getImage('logo', $widthsValue, Yii::$app->blog->attribute('logo')) ?>" rel="<?= $relsValue ?>">
+                <link sizes="<?= $widthsValue . 'x' . $widthsValue ?>" href="<?= BlogHelper::getImage('logo', $widthsValue . "_" . $widthsValue . "__1", Yii::$app->blog->attribute('logo')) ?>" rel="<?= $relsValue ?>">
             <?php endforeach; ?>
         <?php endforeach; ?>
 
-        <meta name="msapplication-TileImage" content="<?= BlogHelper::getImage('logo', 144, Yii::$app->blog->attribute('logo')) ?>">
+        <meta name="msapplication-TileImage" content="<?= BlogHelper::getImage('logo', "144_144__1", Yii::$app->blog->attribute('logo')) ?>">
         <meta name="msapplication-TileColor" content="#ffffff">
 
         <meta name="theme-color" content="<?= Yii::$app->params['manifestThemeColor'] ?>">
