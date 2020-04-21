@@ -5,7 +5,7 @@ use app\components\Helper;
 use app\models\FieldList;
 use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
-use yii\jui\SliderInput;
+use kartik\slider\Slider;
 use yii\web\JsExpression;
 use yii\web\View;
 
@@ -32,7 +32,9 @@ $this->registerJs('
  
 ', View::POS_END);
 $this->registerCss('
-	width: calc(100% - 20px) !important;
+    .slider {
+	width: calc(100%) !important;
+    }
 ');
 $constant = BlogHelper::getConstant();
 ?>
@@ -159,7 +161,7 @@ $constant = BlogHelper::getConstant();
                         <div class="col-sm-12 filter">
                             <div class="panel panel-default">
                                 <div class="panel-heading clickable" style="padding-top: 5px;padding-bottom: 0px;padding-right: 12px;padding-left: 12px;background: #eeeeee; cursor: pointer;">
-                                    <?= Html::tag('label', $field['title'] , ['class' => 'control-label', 'style' => 'color: #555555;']) . Html::tag('small', $field['unit']) ?>
+                                    <?= Html::tag('label', $field['title'], ['class' => 'control-label', 'style' => 'color: #555555;']) . Html::tag('small', $field['unit']) ?>
                                 </div>
                                 <div class="panel-body" style="padding-right: 12px;padding-left: 12px;padding-top: 6px;padding-bottom: 6px;">
                                     <?= Html::hiddenInput($namePrefix . '[operation]', 'IN'); ?>
@@ -215,19 +217,29 @@ $constant = BlogHelper::getConstant();
                                 <div class="panel-body" style="<?= $disabled ? 'display: none;' : '' ?>padding-right: 12px;padding-left: 12px;padding-top: 6px;padding-bottom: 6px;">
                                     <?php
                                     echo "<div><span style='float: left;' id='$idPrefix-label-min'>" . number_format($filter['value'][0]) . "</span><span style='float: right;' id='$idPrefix-label-max'>" . number_format($filter['value'][1]) . "</span><div class='clearfix'></div></div>";
-                                    echo SliderInput::widget([
+                                    echo Slider::widget([
                                         'options' => [
                                             'id' => $idPrefix . '-slider',
                                         ],
-                                        'clientOptions' => [
-                                            //'disabled' => $disabled,
+                                        'name' => $namePrefix . "[input]",
+                                        'value' => implode(',', $filter['value']),
+                                        'sliderColor' => Slider::TYPE_GREY,
+                                        'pluginOptions' => [
                                             'min' => $min,
                                             'max' => $max,
                                             'range' => true,
-                                            'values' => $filter['value'],
-                                            'slide' => new JsExpression("function( event, ui ) { $('#{$idPrefix}-label-min').text(ui.values[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')); $('#{$idPrefix}-label-max').text(ui.values[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));   $('#{$idPrefix}-input-min').val(ui.values[0]); $('#{$idPrefix}-input-max').val(ui.values[1]); }"),
+                                            'tooltip' => 'hide',
+                                        ],
+                                        'pluginEvents' => [
+                                            'slide' => new JsExpression("function( event ) { " .
+                                                    "$('#{$idPrefix}-label-min').text(event.value[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')); " .
+                                                    "$('#{$idPrefix}-label-max').text(event.value[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')); " .
+                                                    "$('#{$idPrefix}-input-min').val(event.value[0]); " .
+                                                    "$('#{$idPrefix}-input-max').val(event.value[1]); " .
+                                                    "}"),
                                         ],
                                     ]);
+
                                     echo Html::hiddenInput($namePrefix . '[value][0]', $filter['value'][0], ['id' => $idPrefix . '-input-min'] + ($disabled ? ['disabled' => 'disabled'] : []));
                                     echo Html::hiddenInput($namePrefix . '[value][1]', $filter['value'][1], ['id' => $idPrefix . '-input-max'] + ($disabled ? ['disabled' => 'disabled'] : []));
                                     ?>
@@ -310,4 +322,16 @@ $constant = BlogHelper::getConstant();
         </div>
     </div>
     <?php
+
+
+
+
+
+
+
+
+
+
+
+
  endif ?>
