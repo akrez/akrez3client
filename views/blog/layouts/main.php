@@ -3,20 +3,18 @@
 use app\assets\BlogAsset;
 use app\components\Alert;
 use app\components\BlogHelper;
+use app\components\Helper;
 use yii\helpers\Html;
 use yii\widgets\Spaceless;
 
 BlogAsset::register($this);
 $blogSlug = (Yii::$app->blog->attribute('slug') ? Yii::$app->blog->attribute('slug') : '');
-$this->title = ($this->title ? $this->title . ' | ' : '') . Yii::$app->blog->attribute('title') . ($blogSlug ? ' | ' . $blogSlug : '');
+$this->title = Helper::normalizeArrayUnorder([$this->title, Yii::$app->blog->attribute('title'), $blogSlug], false, ' | ');
 $this->registerMetaTag([
     'name' => 'description',
-    'content' => (Yii::$app->blog->attribute('des') ? Yii::$app->blog->attribute('des') : Yii::$app->blog->attribute('title') . ($blogSlug ? ' - ' . $blogSlug : '')) . ' - ' . Yii::$app->blog->attribute('name'),
+    'content' => (Yii::$app->blog->attribute('des') ? Yii::$app->blog->attribute('des') : Helper::normalizeArray([Yii::$app->blog->attribute('title'), $blogSlug, Yii::$app->blog->attribute('name')], false, ' - ')),
 ]);
-$this->registerMetaTag([
-    'name' => 'keywords',
-    'content' => Yii::$app->blog->attribute('title') . ($blogSlug ? ',' . $blogSlug : '') . ',' . Yii::$app->blog->attribute('name') . (isset(Yii::$app->view->params['_categories']) && Yii::$app->view->params['_categories'] ? ',' . implode(',', Yii::$app->view->params['_categories']) : ''),
-]);
+
 ?>
 <?php $this->beginPage() ?>
 <?php if (YII_ENV != 'dev') Spaceless::begin(); ?>

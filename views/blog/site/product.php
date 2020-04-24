@@ -1,12 +1,18 @@
 <?php
 
 use app\components\BlogHelper;
+use app\components\Helper;
 use app\models\FieldList;
-use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
 use yii\widgets\Breadcrumbs;
 
 $this->title = Yii::$app->view->params['product']['title'];
+
+$blogSlug = (Yii::$app->blog->attribute('slug') ? Yii::$app->blog->attribute('slug') : '');
+$this->registerMetaTag([
+    'name' => 'keywords',
+    'content' => Helper::normalizeArrayUnorder([Yii::$app->blog->attribute('title'), $blogSlug, Yii::$app->blog->attribute('name')], false, ',') . (isset(Yii::$app->view->params['_categories']) && Yii::$app->view->params['_categories'] ? ',' . implode(',', Yii::$app->view->params['_categories']) : ''),
+]);
 
 $this->registerCss("
     .carousel-indicators li {

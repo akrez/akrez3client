@@ -40,6 +40,16 @@ class Helper extends Component
 
     public static function normalizeArray($arr, $returnAsArray = false, $glue = ",")
     {
+        $arr = self::normalizeArrayUnorder($arr, true, $glue);
+        sort($arr);
+        if ($returnAsArray) {
+            return $arr;
+        }
+        return implode($glue, $arr);
+    }
+
+    public static function normalizeArrayUnorder($arr, $returnAsArray = false, $glue = ",")
+    {
         if (is_array($arr)) {
             $arr = implode(",", $arr);
         }
@@ -50,7 +60,6 @@ class Helper extends Component
         $arr = array_map("trim", $arr);
         $arr = array_unique($arr);
         $arr = array_filter($arr);
-        sort($arr);
         if ($returnAsArray) {
             return $arr;
         }

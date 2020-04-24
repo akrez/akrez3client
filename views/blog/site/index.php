@@ -1,8 +1,15 @@
 <?php
 
 use app\components\BlogHelper;
+use app\components\Helper;
 use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
+
+$blogSlug = (Yii::$app->blog->attribute('slug') ? Yii::$app->blog->attribute('slug') : '');
+$this->registerMetaTag([
+    'name' => 'keywords',
+    'content' => Helper::normalizeArrayUnorder([Yii::$app->blog->attribute('title'), $blogSlug, Yii::$app->blog->attribute('name')], false, ',') . (isset(Yii::$app->view->params['_categories']) && Yii::$app->view->params['_categories'] ? ',' . implode(',', Yii::$app->view->params['_categories']) : ''),
+]);
 ?>
 
 <div class="v1-default-index">

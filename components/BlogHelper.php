@@ -48,4 +48,34 @@ class BlogHelper extends Component
         return $value;
     }
 
+    public static function getMetaKeywordForCategory($categoryId, $categories)
+    {
+        $blogName = Yii::$app->blog->attribute('name');
+        $blogTitle = Yii::$app->blog->attribute('title');
+        $category = $categories[$categoryId];
+        //
+        $keywords = array_merge([$category, $blogName, $blogTitle . '-' . $blogName,], $categories);
+        $keywords = array_merge($keywords, [
+            $category,
+            $category . ' ' . $blogTitle,
+            //
+            'نمایندگی فروش ' . $category,
+            'فروش ' . $category,
+            'خرید اینترنتی محصولات ' . $category,
+            'فروشگاه ' . $category,
+            'فروشگاه اینترنتی ' . $category,
+            'فروشگاه آنلاین ' . $category,
+            //
+            'نمایندگی فروش ' . $blogTitle,
+            'فروش ' . $blogTitle,
+            'خرید اینترنتی محصولات ' . $blogTitle,
+            'فروشگاه ' . $blogTitle,
+            'فروشگاه اینترنتی ' . $blogTitle,
+            'فروشگاه آنلاین ' . $blogTitle,
+            //
+            'خرید آنلاین',
+        ]);
+        return implode(',', $keywords);
+    }
+
 }
