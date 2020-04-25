@@ -4,12 +4,6 @@ use app\components\BlogHelper;
 use yii\helpers\HtmlPurifier;
 use yii\widgets\Breadcrumbs;
 
-$this->title = Yii::$app->view->params['_categories'][Yii::$app->view->params['categoryId']];
-
-$this->registerMetaTag([
-    'name' => 'keywords',
-    'content' => BlogHelper::getMetaKeywordForCategory(Yii::$app->view->params['categoryId'], Yii::$app->view->params['_categories']),
-]);
 ?>
 
 <?=

@@ -48,12 +48,17 @@ class BlogHelper extends Component
         return $value;
     }
 
-    public static function getMetaKeywordForCategory($categoryId, $categories)
+    public static function getMetaKeyword($categories = [], $categoryId = null)
     {
         $blogName = Yii::$app->blog->attribute('name');
         $blogTitle = Yii::$app->blog->attribute('title');
-        $category = $categories[$categoryId];
+        $blogSlug = Yii::$app->blog->attribute('slug');
         //
+        if (empty($categoryId)) {
+            return Helper::normalizeArrayUnorder([$blogTitle, $blogSlug, $blogName], false, ',') . implode(',', $categories);
+        }
+        //
+        $category = $categories[$categoryId];
         $keywords = array_merge([$category, $blogName, $blogTitle . '-' . $blogName,], $categories);
         $keywords = array_merge($keywords, [
             $category,
