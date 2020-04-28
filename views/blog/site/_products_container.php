@@ -17,6 +17,7 @@ $this->registerCss("
     .thumbnail {
         margin: 0px;
         border-radius: 0;
+        padding: 8px;
     }
 
     a.thumbnail {
@@ -29,6 +30,10 @@ $this->registerCss("
 
     .thumbnail .caption * {
         margin: 9px 0 0;
+    }
+    
+    .thumbnail .caption h5 {
+        font-weight: bold;
     }
 ");
 
@@ -63,29 +68,29 @@ $pagination = new Pagination([
 
                     <?php
                     if ($product['image']):
-                        echo Html::img(BlogHelper::getImage('product', '400', $product['image']), ['class' => 'img img-responsive', 'style' => 'margin-left: auto; margin-right: auto; padding: 9px 9px 0;', 'alt'=> HtmlPurifier::process($product['title'])]);
+                        echo Html::img(BlogHelper::getImage('product', '400', $product['image']), ['class' => 'img img-responsive', 'style' => 'margin-left: auto; margin-right: auto; padding: 9px 9px 0;', 'alt' => HtmlPurifier::process($product['title'])]);
                     endif;
                     ?>
 
                     <div class="caption">
 
                         <?php
-                        echo Html::tag('h5', $product['title']);
+                        echo '<h5>' . HtmlPurifier::process($product['title']) . '</h5>';
 
                         if (isset(Yii::$app->view->params['productsFields'][$product['id']])) :
                             foreach (Yii::$app->view->params['productsFields'][$product['id']] as $field) :
                                 if ($field['in_summary']) :
-                                    echo ' <strong> ' . $field['title'] . ' </strong> ';
+                                    echo ' <strong> ' . HtmlPurifier::process($field['title']) . ' : ' . '</strong> ';
                                     if ($field['type'] == FieldList::TYPE_BOOLEAN):
                                         foreach ($field['values'] as $value) :
                                             if ($value):
-                                                echo($field['label_yes'] ? $field['label_yes'] : '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
+                                                echo($field['label_yes'] ? HtmlPurifier::process($field['label_yes']) : '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
                                             else:
-                                                echo($field['label_no'] ? $field['label_no'] : '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>');
+                                                echo($field['label_no'] ? HtmlPurifier::process($field['label_no']) : '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>');
                                             endif;
                                         endforeach;
                                     else:
-                                        echo HtmlPurifier::process(implode(' ,', $field['values']));
+                                        echo HtmlPurifier::process(implode(' ,', $field['values']) . ' ' . $field['unit']);
                                     endif;
                                     echo '<br>';
                                 endif;
