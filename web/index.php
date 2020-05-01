@@ -33,13 +33,13 @@ require VENDOR_PATH . '/yiisoft/yii2/Yii.php';
 $params = require(__DIR__ . '/../config/params.php');
 
 $rules = [
+    '/' => 'site/index',
     '/robots.txt' => 'site/robots',
     '/sitemap.xml' => 'site/sitemap',
     '/manifest.json' => 'site/manifest',
     '/gallery/<type:\w+>/<whq>/<name:[\w\.]+>' => 'site/gallery',
     '/<action:[\w\-]+>/<id>' => 'site/<action>',
     '/<action:[\w\-]+>' => 'site/<action>',
-    '/' => 'site/index',
 ];
 
 $config = [
