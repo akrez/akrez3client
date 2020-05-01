@@ -62,12 +62,8 @@ $this->registerMetaTag([
         <div class="container">
             <?= $this->render('navbar'); ?>
             <div class="row">
-                <?php if ($this->context->id == 'site' && in_array($this->context->action->id, ['signin', 'signup', 'reset-password-request', 'reset-password', 'error',])): ?>
-                    <div class="col-sm-12"><?= Alert::widget() ?><?= $content ?></div>
-                <?php else: ?>
                     <div class="col-sm-3"><?= $this->render('mainmenu'); ?></div>
                     <div class="col-sm-9"><?= Alert::widget() ?><?= $content ?></div>
-                <?php endif; ?>
             </div>
         </div>
         <?php $this->endBody() ?>

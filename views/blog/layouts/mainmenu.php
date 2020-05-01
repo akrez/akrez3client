@@ -70,7 +70,7 @@ $this->registerCss('
 $constant = BlogHelper::getConstant();
 ?>
 
-<?php if ($this->context->id == 'site' && in_array($this->context->action->id, ['index']) && Yii::$app->blog->attribute('logo')): ?>
+<?php if ($this->context->id == 'site' && in_array($this->context->action->id, ['category']) == false): ?>
     <div class="row pb20">
         <div class="col-sm-12">
             <?php
@@ -365,17 +365,4 @@ $constant = BlogHelper::getConstant();
             </div>
         </div>
     </div>
-    <?php
-
-
-
-
-
-
-
-
-
-
-
-
- endif ?>
+<?php endif ?>
