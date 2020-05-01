@@ -48,38 +48,54 @@ class BlogHelper extends Component
         return $value;
     }
 
-    public static function getMetaKeyword($categories = [], $categoryId = null)
+    public static function getMetaKeyword()
     {
+        /////
         $blogName = Yii::$app->blog->attribute('name');
         $blogTitle = Yii::$app->blog->attribute('title');
         $blogSlug = Yii::$app->blog->attribute('slug');
         //
-        if (empty($categoryId)) {
-            return Helper::normalizeArrayUnorder([$blogTitle, $blogSlug, $blogName], false, ',') . implode(',', $categories);
+        $categories = isset(Yii::$app->view->params['_categories']) ? Yii::$app->view->params['_categories'] : [];
+        $categoryId = isset(Yii::$app->view->params['categoryId']) ? Yii::$app->view->params['categoryId'] : null;
+        $category = isset($categories[$categoryId]) ? $categories[$categoryId] : null;
+        //
+        $productTitle = isset(Yii::$app->view->params['product']['title']) ? Yii::$app->view->params['product']['title'] : null;
+        /////
+        $words = [
+            'نمایندگی فروش',
+            'فروش',
+            'خرید اینترنتی محصولات',
+            'فروشگاه',
+            'فروشگاه اینترنتی',
+            'فروشگاه آنلاین',
+            'خرید آنلاین'
+        ];
+        /////
+        $keywords = [$blogTitle, $blogName, $blogTitle . '-' . $blogName, $blogTitle . '-' . $blogSlug];
+        //
+        if ($productTitle) {
+            $keywords = array_merge($keywords, [
+                $productTitle . ' ' . $blogTitle,
+                $productTitle,
+            ]);
         }
         //
-        $category = $categories[$categoryId];
-        $keywords = array_merge([$category, $blogName, $blogTitle . '-' . $blogName,], $categories);
-        $keywords = array_merge($keywords, [
-            $category,
-            $category . ' ' . $blogTitle,
-            //
-            'نمایندگی فروش ' . $category,
-            'فروش ' . $category,
-            'خرید اینترنتی محصولات ' . $category,
-            'فروشگاه ' . $category,
-            'فروشگاه اینترنتی ' . $category,
-            'فروشگاه آنلاین ' . $category,
-            //
-            'نمایندگی فروش ' . $blogTitle,
-            'فروش ' . $blogTitle,
-            'خرید اینترنتی محصولات ' . $blogTitle,
-            'فروشگاه ' . $blogTitle,
-            'فروشگاه اینترنتی ' . $blogTitle,
-            'فروشگاه آنلاین ' . $blogTitle,
-            //
-            'خرید آنلاین',
-        ]);
+        if ($category) {
+            $keywords = array_merge($keywords, [$category, $category . ' ' . $blogTitle,], array_map(function($value) use($category) {
+                        return $value . ' ' . $category;
+                    }, $words));
+        }
+        //
+        if ($categories) {
+            $keywords = array_merge($keywords, $categories);
+        }
+        //
+        if ($blogTitle) {
+            $keywords = array_merge($keywords, array_map(function($value) use($blogTitle) {
+                        return $value . ' ' . $blogTitle;
+                    }, $words));
+        }
+        //
         return implode(',', $keywords);
     }
 

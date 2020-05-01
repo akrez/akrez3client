@@ -11,7 +11,7 @@ BlogAsset::register($this);
 
 $this->registerMetaTag([
     'name' => 'keywords',
-    'content' => BlogHelper::getMetaKeyword(isset(Yii::$app->view->params['_categories']) ? Yii::$app->view->params['_categories'] : [], isset(Yii::$app->view->params['categoryId']) ? Yii::$app->view->params['categoryId'] : null ),
+    'content' => BlogHelper::getMetaKeyword(),
 ]);
 
 $blogSlug = (Yii::$app->blog->attribute('slug') ? Yii::$app->blog->attribute('slug') : '');
