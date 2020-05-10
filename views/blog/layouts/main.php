@@ -21,22 +21,6 @@ $this->registerMetaTag([
     'name' => 'description',
     'content' => (Yii::$app->blog->attribute('des') ? Yii::$app->blog->attribute('des') : Helper::normalizeArray([Yii::$app->blog->attribute('title'), $blogSlug, Yii::$app->blog->attribute('name')], false, ' - ')),
 ]);
-$this->registerCss("
-    footer > .table-container {
-        display: table;
-    }
-
-    footer > .table-container .table-row {
-        height: 100%;
-        display: table-row;
-    }
-
-    footer > .table-container .table-row .table-col {
-        display: table-cell;
-        float: none;
-        vertical-align: middle;
-    }
-");
 ?>
 <?php $this->beginPage() ?>
 <?php if (YII_ENV != 'dev') Spaceless::begin(); ?>
@@ -85,9 +69,9 @@ $this->registerCss("
         </div>
 
         <footer class="footer pb20 pt20" style="background-color: #f8f8f8">
-            <div class="container table-container">
-                <div class="row table-row">
-                    <div class="col-sm-3 table-col text-center">
+            <div class="container">
+                <div class="row ">
+                    <div class="col-sm-3 text-center">
                         <h3 class="mt0"><?= HtmlPurifier::process(Yii::$app->blog->attribute('title')) ?></h3>
                         <?php
                         $parts = [];
@@ -102,51 +86,51 @@ $this->registerCss("
                         echo implode(' - ', $parts);
                         ?>
                     </div>
-                    <div class="col-sm-6 table-col">
+                    <div class="col-sm-6 text-center">
                         <div class="row">
                             <div class="col-sm-12">
                                 <?php
                                 $parts = [];
                                 if (Yii::$app->blog->attribute('address')) {
-                                    $parts[] = Html::encode(Yii::$app->blog->attribute('address'));
+                                    $parts[] = '<p>' . Html::encode(Yii::$app->blog->attribute('address')) . '</p>';
                                 }
                                 if (Yii::$app->blog->attribute('email')) {
                                     $email = Html::encode(Yii::$app->blog->attribute('email'));
-                                    $parts[] = '<a href="mailto:' . $email . '">' . $email . '</a>';
+                                    $parts[] = '<p><a href="mailto:' . $email . '">' . $email . '</a></p>';
                                 }
-                                echo implode('<br>', $parts);
+                                echo implode('', $parts);
                                 ?>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-4 table-col">
+                    <div class="col-sm-3">
                         <div class="row">
                             <?php
                             if (Yii::$app->blog->attribute('facebook')) {
                                 $url = HtmlPurifier::process('https://www.facebook.com/' . Yii::$app->blog->attribute('facebook'));
                                 $logo = Html::img(Yii::getAlias('@web/cdn/image/social/facebook.svg'), ['style' => 'margin: auto;', 'class' => 'img-responsive img-rounded', 'alt' => $url]);
-                                echo '<div class="col-sm-3 pull-left">' . Html::a($logo, $url, ['style' => 'text-align: center;']) . '</div>';
+                                echo '<div class="col-xs-3 pull-left">' . Html::a($logo, $url, ['style' => 'text-align: center;']) . '</div>';
                             }
                             ?>
                             <?php
                             if (Yii::$app->blog->attribute('twitter')) {
                                 $url = HtmlPurifier::process('https://twitter.com/' . Yii::$app->blog->attribute('twitter'));
                                 $logo = Html::img(Yii::getAlias('@web/cdn/image/social/twitter.svg'), ['style' => 'margin: auto;', 'class' => 'img-responsive img-rounded', 'alt' => $url]);
-                                echo '<div class="col-sm-3 pull-left">' . Html::a($logo, $url, ['style' => 'text-align: center;']) . '</div>';
+                                echo '<div class="col-xs-3 pull-left">' . Html::a($logo, $url, ['style' => 'text-align: center;']) . '</div>';
                             }
                             ?>
                             <?php
                             if (Yii::$app->blog->attribute('instagram')) {
                                 $url = HtmlPurifier::process('https://www.instagram.com/' . Yii::$app->blog->attribute('instagram'));
                                 $logo = Html::img(Yii::getAlias('@web/cdn/image/social/instagram.svg'), ['style' => 'margin: auto;', 'class' => 'img-responsive img-rounded', 'alt' => $url]);
-                                echo '<div class="col-sm-3 pull-left">' . Html::a($logo, $url, ['style' => 'text-align: center;']) . '</div>';
+                                echo '<div class="col-xs-3 pull-left">' . Html::a($logo, $url, ['style' => 'text-align: center;']) . '</div>';
                             }
                             ?>
                             <?php
                             if (Yii::$app->blog->attribute('telegram')) {
                                 $url = HtmlPurifier::process('https://telegram.me/' . Yii::$app->blog->attribute('telegram'));
                                 $logo = Html::img(Yii::getAlias('@web/cdn/image/social/telegram.svg'), ['style' => 'margin: auto;', 'class' => 'img-responsive img-rounded', 'alt' => $url]);
-                                echo '<div class="col-sm-3 pull-left">' . Html::a($logo, $url, ['style' => 'text-align: center;']) . '</div>';
+                                echo '<div class="col-xs-3 pull-left">' . Html::a($logo, $url, ['style' => 'text-align: center;']) . '</div>';
                             }
                             ?>
                         </div>
