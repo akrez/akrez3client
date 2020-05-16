@@ -352,12 +352,12 @@ $constant = BlogHelper::getConstant();
 
 <?php endif; ?>
 
-<?php if ($this->context->id == 'site' && in_array($this->context->action->id, ['category']) == false): ?>
+<?php if ($this->context->id == 'site' && !in_array($this->context->action->id, ['category']) && isset(Yii::$app->view->params['_categories'])): ?>
     <div class="row pb20">
         <div class="col-xs-12">
             <div class="btn-group-vertical" role="group" style="width: 100%;">
                 <?php
-                foreach (Yii::$app->view->params['_categories'] as $id => $title) {
+                foreach ((array)Yii::$app->view->params['_categories'] as $id => $title) {
                     $url = BlogHelper::url('site/category', ['id' => $id]);
                     echo '<a class="btn btn-default" href="' . HtmlPurifier::process($url) . '"><h4 class="h4mainmenu">' . HtmlPurifier::process($title) . '</h4></a>';
                 }
